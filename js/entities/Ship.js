@@ -61,7 +61,7 @@ export class Ship extends GameObject{
 
   this.acceleration=new Vector2(0,0);
   
-if(Input.keys["KeyW"]||Input.keys["ArrowUp"] || this.touch.up){
+if(Input.keys["KeyW"]||Input.keys["ArrowUp"]){
   this.acceleration.x=Math.cos(this.rotation)*this.enginePower;
   this.acceleration.y=Math.sin(this.rotation)*this.enginePower;
 
@@ -111,7 +111,7 @@ if(this.fireCooldown>0){
   this.fireCooldown--;
 }
 
-  if(Input.keys["Space"] || this.touch.fire && this.fireCooldown<=0){
+  if(Input.keys["Space"] && this.fireCooldown<=0){
    const bullet=new Bullet(
     this.position.x+Math.cos(this.rotation)*30,
     this.position.y+Math.sin(this.rotation)*30,
