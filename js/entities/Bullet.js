@@ -3,7 +3,7 @@ export class Bullet extends GameObject{
   constructor(x,y,rotation){
     super(x,y);
     this.radius=4;
-    this.speed=20;
+    this.speed=70;
     this.life=120;
     this.velocity={
       x:Math.cos(rotation)*this.speed,

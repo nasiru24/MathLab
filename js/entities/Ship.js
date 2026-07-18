@@ -13,10 +13,10 @@ export class Ship extends GameObject{
     this.height=70;
     this.rotation=-Math.PI/2;
     this.enginePower=0.1;
-    this.rotationSpeed=0.1;
-    this.maxSpeed=10;
+    this.rotationSpeed=0.12;
+    this.maxSpeed=15;
     this.velocity=new Vector2(0,0);
-    this.acceleration=0.15;
+    this.acceleration=0.8;
     this.friction=0.9;
     this.thrusting=false;
     this.fireRate=15;
@@ -34,7 +34,7 @@ export class Ship extends GameObject{
 
   }
 
-  update(){
+  update(input){
     if(this.game.gameOver){
       return;
     }
@@ -51,17 +51,17 @@ export class Ship extends GameObject{
       }
 
 
-    if(Input.keys["KeyA"]||Input.keys["ArrowLeft"]){
+    if(input.keys["KeyA"]||input.keys["ArrowLeft"] || input.touch.left){
       this.rotation-=this.rotationSpeed;
     }
 
-  if(Input.keys["KeyD"]||Input.keys["ArrowRight"]){
+  if(input.keys["KeyD"]||input.keys["ArrowRight"] || input.touch.right){
     this.rotation+=this.rotationSpeed;
   }
 
   this.acceleration=new Vector2(0,0);
   
-if(Input.keys["KeyW"]||Input.keys["ArrowUp"]){
+if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up){
   this.acceleration.x=Math.cos(this.rotation)*this.enginePower;
   this.acceleration.y=Math.sin(this.rotation)*this.enginePower;
 
@@ -111,7 +111,7 @@ if(this.fireCooldown>0){
   this.fireCooldown--;
 }
 
-  if(Input.keys["Space"] && this.fireCooldown<=0){
+  if(input.keys["Space"] || input.touch.fire && this.fireCooldown<=0){
    const bullet=new Bullet(
     this.position.x+Math.cos(this.rotation)*30,
     this.position.y+Math.sin(this.rotation)*30,
@@ -235,42 +235,7 @@ die(){
 
     context.restore();
 
-   /* context.shadowBlur=10;
-    context.shadowColor="#66ccff";
 
-    context.beginPath();
-
-    context.moveTo(
-      0,-40
-    );
-
-    context.lineTo(
-      28,30
-    );
-
-    context.lineTo(
-      0,20
-    );
-
-    context.lineTo(-28,30);
-
-    context.closePath();
-    context.fillStyle="white";
-    context.fill();
-
-    context.beginPath();
-    context.arc(
-      0,
-      -10,
-      6,
-      0,
-      Math.PI*2
-    );
-    context.fillStyle="deepskyblue";
-    context.fill();
-
-    context.shadowBlur=0;
-*/
     if(this.thrusting){
       this.velocity.x*=0.99;
       this.velocity.y*=0.99;

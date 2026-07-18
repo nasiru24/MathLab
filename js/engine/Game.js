@@ -10,10 +10,32 @@ import { Playing } from "../states/Playing.js";
 import { Input } from "../input/Input.js";
 import { AsteroidField } from "../world/AsteroidField.js";
 import { Universe } from "../world/Universe.js";
+import { GameOver } from "../states/GameOver.js";
+import { TouchControls } from "../input/TouchControls.js";
 
 export class Game{
   constructor(canvas){
     this.canvas=canvas;
+    this.mouse={
+      x:0,
+      y:0
+    }
+
+    canvas.addEventListener("mousemove",(e)=>{
+      const rect=canvas.getBoundingClientRect();
+      this.mouse.x=e.clientX-rect.left;
+      this.mouse.y=e.clientY-rect.top;
+    });
+    canvas.addEventListener("click",()=>{
+      this.clicked=true;
+    });
+    canvas.addEventListener("touchstart",(e)=>{
+      const rect=canvas.getBoundingClientRect();
+      this.mouse.x=e.tuches[0].clientX-rect.left;
+      this.mouse.y=e.touches[0].clientY-rect.top;
+      this.mouse.clicked=true;
+    });
+
     this.context=canvas.getContext("2d");
     this.objects=[];
     this.camera=new Camera(canvas.width,canvas.height);
@@ -41,13 +63,13 @@ export class Game{
     this.audio.load("laser","assets/audio/laser.mp3");
     this.audio.load("explosion","assets/audio/explosion.mp3");
     this.audio.load("thrust","assets/audio/thrust.mp3");
-    //this.ship=new Ship(this.canvas.width/2, this.canvas.height/2, this);
-    //this.add(this.ship);
     this.universe=new Universe(this);
     this.asteroidField=new AsteroidField(this);
-    this.input= Input;
+    this.input=new Input();
+    this.touchControls=new TouchControls(this.input);
     this.state="Menu";
     this.menu=new Menu(this);
+    this.gameOverScreen=new GameOver(this);
     this.playing=new Playing(this);
     this.asteroidSpawnTimer=0;
   }
@@ -86,9 +108,13 @@ export class Game{
       this.menu.update();
         return;
       }
-    if(this.gameOver && this.input.keys["Enter"]){
-      console.log("Restart");
-      this.restart();
+      if(this.state === "GameOver"){
+        this.gameOverScreen.update();
+        return;
+      }
+
+    if(this.lives<=0){
+      this.state="GameOver";
     }
     
     this.camera.update();
@@ -100,7 +126,7 @@ export class Game{
     }
     for(let i=this.objects.length-1;i>=0;i--){
       let object=this.objects[i];
-      object.update();
+      object.update(this.input);
 
       if(object.destroyed || object.life<=0){
         this.objects.splice(i,1);
@@ -113,7 +139,6 @@ export class Game{
       this.waveMessageTimer--;
     }
 
-
     this.checkCollisions();
 
     for(const object of this.pendingObjects){
@@ -121,8 +146,6 @@ export class Game{
     }
 
     this.pendingObjects=[];
-
-    //this.spawnAsteroidsAroundPlayer();
     this.asteroidSpawnTimer--;
     if(this.asteroidSpawnTimer<=0){
       this.spawnAsteroidsAroundPlayer()
@@ -143,21 +166,7 @@ export class Game{
       const asteroid=new Asteroid(x,y, size);
       this.add(asteroid);
     }
-}
-
-   /*spawnAsteroidsAroundPlayer(){
-      let nearby=0;
-      for(const object of this.objects){
-        if(object instanceof Asteroid){
-          const dx=object.position.x-this.ship.position.x;
-          const dy=object.position.y-this.ship.position.y;
-          const distance=Math.hypot(dx,dy);
-          if(distance<1500){
-            nearby++;
-          }
-        }
-      }
-    }*/
+  }
       
     checkCollisions(){
       for(let i=0;i<this.objects.length;i++){
@@ -218,6 +227,7 @@ export class Game{
           ){
             if(a.alive){
             a.die();
+            this.audio.play("explosion");
             }
             continue;
           }
@@ -231,14 +241,12 @@ export class Game{
           ){
             if(b.alive){
             b.die();
+            this.audio.play("explosion");
           }
           continue;
           }
-
       }
-
       }
-
       this.objects=this.objects.filter(object=>{
         if(object.destroyed){
           return false;
@@ -257,12 +265,14 @@ export class Game{
     if(this.lives<=0){
       this.lives=0;
       this.gameOver=true;
+      this.state="GameOver";
       return;
     }
       this.ship.respawn();
   }
 
   restart(){
+    this.state="Playing";
     this.gameOver=false;
     this.lives=3;
     this.score=0;
@@ -374,6 +384,17 @@ export class Game{
     );
   }
 
+  drawUI(context){
+    context.save();
+    context.fillStyle="white";
+    context.font="28px Arial";
+    context.textAlign="center";
+    context.fillText(
+      `SCORE: ${this.score}`,80,40
+    );
+    context.restore();
+  }
+
   render(context,camera){
     this.context.clearRect(
       0,
@@ -385,6 +406,10 @@ export class Game{
     if(this.state === "Menu"){
     this.menu.render(context);
     return;
+    }
+    if(this.state === "GameOver"){
+      this.gameOverScreen.render(context);
+      return;
     }
   this.renderBackground(context);
   this.universe.render(this.context,this.camera);
@@ -408,25 +433,10 @@ export class Game{
       this.canvas.width/2,
       context.height/2
     );
-    context.restore();
   }
-  context.save();
-  context.fillStyle="red";
-  context.font="28px Arial";
-  context.fillText(
-    `LIVES: ${this.lives}`,
-    20,
-    80
-  );
 
-  context.save();
-  context.fillStyle="orange";
-  context.font="28px Arial";
-  context.fillText(
-    "SCORE:"+this.score,
-    20,
-    40
-  );
+  this.drawUI(context);
+
   if(this.gameOver){
     context.save();
     context.fillStyle="rgba(0,0,0,0.65)";
@@ -434,28 +444,24 @@ export class Game{
       0,0,this.canvas.width,
       this.canvas.height
     );
-    context.fillStyle="#ffffff";
-    context.font="70px Arial";
-    context.textAlign="center";
-    context.fillText(
-      "GAME OVER",
-      this.canvas.width/2,
-      this.canvas.height/2-50
-    );
-    context.font="30px Arial";
+
+  context.font="30px Arial";
     context.fillText(
       "SCORE:"+this.score,
       this.canvas.width/2,
       this.canvas.height/2+10
     );
-    context.font="25px Arial";
-    context.fillText(
-      "PRESS ENTER TO RESTART",
-      this.canvas.width/2,
-      this.canvas.height/2+70
-    );
-    context.restore();
   }
+
+  context.save();
+  context.fillStyle="red";
+  context.textAlign="center";
+  context.font="28px Arial";
+  context.fillText(
+    `LIVES: ${this.lives}`,
+    75,
+    85
+  );
 
   context.restore();
   }

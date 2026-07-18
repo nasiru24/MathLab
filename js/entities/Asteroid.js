@@ -7,7 +7,7 @@ export class Asteroid extends GameObject{
     this.mass=size/10;
     this.rotation=Math.random()*Math.PI*2;
     this.rotationSpeed=(Math.random()-0.5)*0.05;
-    let speed=3-(this.size/50)+Math.random()*1;
+    let speed=5+Math.random()*3;
     let angle=Math.random()*Math.PI*2;
     this.velocity=new Vector2(
       Math.cos(angle)*speed,

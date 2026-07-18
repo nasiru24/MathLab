@@ -1,27 +1,35 @@
 export class TouchControls{
-  constructor(){
-    this.left=false;
-    this.right=false;
-    this.up=false;
-    this.fire=false;
+  constructor(input){
+    this.input=input;
+    this.createButton("","up",80,window.innerHeight-180);
+    this.createButton("","left",20,window.innerHeight-100);
+    this.createButton("","right",140,window.innerHeight-100);
+    this.createButton("","fire",window.innerWidth-120,window.innerHeight-120);
+  }
+  createButton(text,type,x,y){
+    let button=document.createElement("button");
+    button.innerHTML=text;
+    button.style.position="fixed";
+    button.style.left=x+"px";
+    button.style.top=y+"px";
+    button.style.width="70px";
+    button.style.height="70px";
+    button.style.fontSize="30px";
+    button.style.opacity="0.6";
+    button.style.borderRadius="50%";
 
-    window.addEventListener(
-      "touchstart",(e)=>{
-        let x=e.touches[0].clientX;
-        let y=e.touches[0].clientY;
-
-        if(x<innerWidth/2){
-          this.up=true;
-        }
-        else{this.fire=true;}
+    button.addEventListener(
+      "touchstart",()=>{
+        this.input.touch[type]=true;
       }
     );
 
-    window.addEventListener(
+    button.addEventListener(
       "touchend",()=>{
-        this.up=false;
-        this.fire=false;
+        this.input.touch[type]=false;
       }
     );
+
+    document.body.appendChild(button);
   }
 }

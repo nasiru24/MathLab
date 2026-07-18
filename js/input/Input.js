@@ -1,12 +1,19 @@
-export const Input={
-  keys:{}
-};
+export class Input{
+  constructor(){
+  this.keys={};
+  this.touch={
+    up:false,
+    left:false,
+    right:false,
+    fire:false
+  };
 
 window.addEventListener("keydown",(event)=>{
-  Input.keys[event.code]=true;
+  this.keys[event.code]=true;
 });
 
 window.addEventListener("keyup",(event)=>{
-  Input.keys[event.code]=false;
+  this.keys[event.code]=false;
 });
-
+  }
+}
