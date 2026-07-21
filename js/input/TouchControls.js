@@ -1,12 +1,16 @@
 export class TouchControls{
   constructor(input){
     this.input=input;
+    this.buttons=[];
     this.createButton("","up",80,window.innerHeight-180);
     this.createButton("","left",20,window.innerHeight-100);
     this.createButton("","right",140,window.innerHeight-100);
     this.createButton("","fire",window.innerWidth-120,window.innerHeight-120);
   }
   createButton(text,type,x,y){
+    if(this.input.controlMode!=="buttons"){
+      return;
+    }
     let button=document.createElement("button");
     button.innerHTML=text;
     button.style.position="fixed";

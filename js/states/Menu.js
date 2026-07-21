@@ -92,7 +92,7 @@ export class Menu{
     context.font=`bold ${titleSize}px Arial`;
     context.textAlign="center";
     context.fillText(
-      "MATHLAB SPACE", centerX,centerY-120+float
+      "MATHLAB SPACE", centerX,centerY-190+float
     );
 
     context.font="22px Arial";

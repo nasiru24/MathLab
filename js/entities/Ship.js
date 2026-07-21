@@ -50,6 +50,8 @@ export class Ship extends GameObject{
         this.blinkTimer++;
       }
 
+      let moveX=input.moveX || 0;
+      let moveY=input.moveY || 0;
 
     if(input.keys["KeyA"]||input.keys["ArrowLeft"] || input.touch.left){
       this.rotation-=this.rotationSpeed;
@@ -76,6 +78,11 @@ if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up){
       this.rotation
     );
     this.game.add(flame);
+
+      let moveX=input.moveX;
+      let moveY=input.moveY;
+      this.velocity.x+=moveX*this.enginePower;
+      this.velocity.y+=moveY*this.enginePower;
 
     const thrustPower=0.15;
     this.velocity.x+=Math.cos(this.rotation)*thrustPower;
@@ -111,7 +118,7 @@ if(this.fireCooldown>0){
   this.fireCooldown--;
 }
 
-  if(input.keys["Space"] || input.touch.fire && this.fireCooldown<=0){
+  if(input.keys["Space"] || input.touch.fire || input.fire && this.fireCooldown<=0){
    const bullet=new Bullet(
     this.position.x+Math.cos(this.rotation)*30,
     this.position.y+Math.sin(this.rotation)*30,

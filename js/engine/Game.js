@@ -12,6 +12,9 @@ import { AsteroidField } from "../world/AsteroidField.js";
 import { Universe } from "../world/Universe.js";
 import { GameOver } from "../states/GameOver.js";
 import { TouchControls } from "../input/TouchControls.js";
+import { Joystick } from "../input/Joystick.js";
+import { InputManager } from "../input/InputManager.js";
+import { FireButton } from "../input/FireButton.js";
 
 export class Game{
   constructor(canvas){
@@ -65,13 +68,16 @@ export class Game{
     this.audio.load("thrust","assets/audio/thrust.mp3");
     this.universe=new Universe(this);
     this.asteroidField=new AsteroidField(this);
-    this.input=new Input();
-    this.touchControls=new TouchControls(this.input);
     this.state="Menu";
     this.menu=new Menu(this);
     this.gameOverScreen=new GameOver(this);
     this.playing=new Playing(this);
     this.asteroidSpawnTimer=0;
+    this.input=new Input();
+    this.joystick=new Joystick();
+    this.fireButton=new FireButton();
+    this.touchControls=new TouchControls(this.input);
+    this.inputManager=new InputManager(this.input,this.joystick,this.fireButton);
   }
 
   addScore(points){
@@ -124,6 +130,7 @@ export class Game{
     if(this.asteroidField){
       this.asteroidField.update();
     }
+
     for(let i=this.objects.length-1;i>=0;i--){
       let object=this.objects[i];
       object.update(this.input);
@@ -135,6 +142,9 @@ export class Game{
         this.asteroidField.removeDestroyed();
       }
     }
+    this.inputManager.update();
+    this.joystick.update();
+
     if(this.waveMessageTimer>0){
       this.waveMessageTimer--;
     }
@@ -144,7 +154,7 @@ export class Game{
     for(const object of this.pendingObjects){
       this.add(object);
     }
-
+    this.ship.update(this.input);
     this.pendingObjects=[];
     this.asteroidSpawnTimer--;
     if(this.asteroidSpawnTimer<=0){
@@ -413,6 +423,7 @@ export class Game{
     }
   this.renderBackground(context);
   this.universe.render(this.context,this.camera);
+  this.joystick.render(this.context);
 
     for(const object of this.objects){
       if(object.visible){
@@ -422,6 +433,7 @@ export class Game{
       );
     }
   }
+  this.fireButton.render(this.context);
 
   if(this.waveMessageTimer>0){
     context.save();
