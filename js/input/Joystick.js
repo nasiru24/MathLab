@@ -32,7 +32,6 @@ export class Joystick{
     );
 
     window.addEventListener("touchmove",(event)=>{
-      console.log("Joystick",this.moveX,this.moveY);
       if(!this.active) return;
       const touch=event.touches[0];
       let dx=touch.clientX-this.baseX;
@@ -82,9 +81,6 @@ export class Joystick{
   }
 
   render(context){
-    /*if(input.mode!=="joystick"){
-      return;
-    }*/
     context.save();
     context.beginPath();
     context.arc(
@@ -92,17 +88,100 @@ export class Joystick{
       this.radius,0,
       Math.PI*2
     );
-    context.fillStyle="rgba(255,255,255,0.2)";
+
+    const gradient=context.createRadialGradient(
+      this.baseX,this.baseY,
+      this.radius*0.2,
+      this.baseX,this.baseY,this.radius
+    );
+    gradient.addColorStop(0,"rgba(70,70,90,0.95)");
+    gradient.addColorStop(1,"rgba(20,20,30,0.95)");
+    context.fillStyle=gradient;
     context.fill();
+    context.lineWidth=4;
+    context.strokeStyle="rgba(255,255,255,0.18)";
+    context.stroke();
+
+    context.beginPath();
+    context.arc(
+      this.baseX,this.baseY,
+      this.radius+8,0,
+      Math.PI*2
+    );
+    context.strokeStyle="rgba(0,255,255,0.15)";
+    context.lineWidth=8;
+    context.stroke();
+
+    if(this.active){
+      context.save();
+      context.shadowBlur=20;
+      context.shadowColor="#00e5ff";
+      context.restore();
+    }
+
+    context.strokeStyle="rgba(255,255,255,0.35)";
+    context.lineWidth=2;
+    context.beginPath();
+    context.moveTo(this.baseX,this.baseY-this.radius+15);
+    context.lineTo(this.baseX-8,this.baseY-this.radius+25);
+    context.moveTo(this.baseX,this.baseY-this.radius+15);
+    context.lineTo(this.baseX+8,this.baseY-this.radius+25);
+    context.stroke();
+
+    context.strokeStyle="rgba(255,255,255,0.35)";
+    context.lineWidth=2;
+    context.beginPath();
+    context.moveTo(this.baseX,this.baseY+this.radius-15);
+    context.lineTo(this.baseX-8,this.baseY+this.radius-25);
+    context.moveTo(this.baseX,this.baseY+this.radius-15);
+    context.lineTo(this.baseX+8,this.baseY+this.radius-25);
+    context.stroke();
+
+    context.strokeStyle="rgba(255,255,255,0.35)";
+    context.lineWidth=2;
+    context.beginPath();
+    context.moveTo(this.baseX-this.radius+15,this.baseY);
+    context.lineTo(this.baseX-this.radius+25,this.baseY-8);
+    context.moveTo(this.baseX-this.radius+15,this.baseY);
+    context.lineTo(this.baseX-this.radius+25,this.baseY+8);
+    context.stroke();
+
+    context.strokeStyle="rgba(255,255,255,0.35)";
+    context.lineWidth=2;
+    context.beginPath();
+    context.moveTo(this.baseX+this.radius-15,this.baseY);
+    context.lineTo(this.baseX+this.radius-25,this.baseY-8);
+    context.moveTo(this.baseX+this.radius-15,this.baseY);
+    context.lineTo(this.baseX+this.radius-25,this.baseY+8);
+    context.stroke();
 
     context.beginPath();
     context.arc(
       this.knobX,this.knobY,
-      this.knobRadius,0,
+      this.active
+      ?this.knobRadius+3
+      :this.knobRadius,0,
       Math.PI*2
     );
-    context.fillStyle="cyan";
+
+    const knobGradient=context.createRadialGradient(
+      this.knobX-8,this.knobY-8,
+      5,this.knobX,this.knobY,
+      this.knobRadius
+    );
+
+    knobGradient.addColorStop(0,"#7cfbff");
+    knobGradient.addColorStop(1,"#00bcd4");
+    context.fillStyle=knobGradient;
     context.fill();
+    context.lineWidth=3;
+    context.strokeStyle="rgba(255,255,255,0.35)";
+    context.stroke();
+
+    if(this.active){
+      context.restore();
+    }
+
     context.restore();
   }
 }

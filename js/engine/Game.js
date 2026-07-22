@@ -15,6 +15,8 @@ import { TouchControls } from "../input/TouchControls.js";
 import { Joystick } from "../input/Joystick.js";
 import { InputManager } from "../input/InputManager.js";
 import { FireButton } from "../input/FireButton.js";
+import { Vector2 } from "../math/Vector2.js";
+import { PulseButton } from "../input/PulseButton.js";
 
 export class Game{
   constructor(canvas){
@@ -76,8 +78,12 @@ export class Game{
     this.input=new Input();
     this.joystick=new Joystick();
     this.fireButton=new FireButton();
+    this.pulseButton=new PulseButton();
     this.touchControls=new TouchControls(this.input);
-    this.inputManager=new InputManager(this.input,this.joystick,this.fireButton);
+    this.inputManager=new InputManager(
+      this.input,this.joystick,
+      this.fireButton,this.pulseButton);
+    this.time=0;
   }
 
   addScore(points){
@@ -142,8 +148,10 @@ export class Game{
         this.asteroidField.removeDestroyed();
       }
     }
+    this.checkPulses();
     this.inputManager.update();
     this.joystick.update();
+    this.pulseButton.update();
 
     if(this.waveMessageTimer>0){
       this.waveMessageTimer--;
@@ -394,18 +402,85 @@ export class Game{
     );
   }
 
+  checkPulses(){
+    const pulses=this.objects.filter(obj=>obj.constructor.name==="Pulse");
+    const asteroids=this.objects.filter(obj=>obj.constructor.name==="Asteroid");
+    for(const pulse of pulses){
+      for(const asteroid of asteroids){
+        const dx=asteroid.position.x-pulse.position.x;
+        const dy=asteroid.position.y-pulse.position.y;
+        const distance=Math.sqrt(dx*dx+dy*dy);
+        if(distance<pulse.radius && !pulse.hitObjects.has(asteroid)){
+          const direction=new Vector2(dx,dy);
+          direction.normalize();
+          asteroid.velocity.x+=direction.x*pulse.force;
+          asteroid.velocity.y+=direction.y*pulse.force;
+          pulse.hitObjects.add(asteroid);
+        }
+      }
+    }
+  }
+
   drawUI(context){
+    let formattedScore=String(this.score).padStart(6,"0");
     context.save();
     context.fillStyle="white";
-    context.font="28px Arial";
+    context.font="24px Arial";
     context.textAlign="center";
     context.fillText(
-      `SCORE: ${this.score}`,80,40
+      `SCORE ${this.score}`.padStart(6,"0"),100,60
     );
     context.restore();
   }
 
+  drawPulse(context,ship){
+    const width=150;
+    const height=15;
+    const x=30;
+    const y=140;
+    context.fillStyle="rgba(255,255,255,0.2)";
+    context.fillRect(
+      x,y,width,height
+    );
+    let glow=Math.sin(this.time)*10+20;
+    context.shadowBlur=glow;
+    context.shadowColor="#00ffff";
+    context.fillStyle="#00ffff";
+    context.fillRect(
+      x,y,width*(this.ship.pulseEnergy/this.ship.maxPulseEnergy),
+      height
+    );
+    context.fillStyle="white";
+    context.font="18px Arial";
+    context.fillText(
+      "PULSE CORE",x+20,y-12
+    );
+    const pulseAmount=this.ship.pulseEnergy/this.ship.maxPulseEnergy;
+    if(pulseAmount<0.25){
+      context.fillStyle="#ff3030";
+      context.shadowBlur=20;
+      context.shadowColor="#ff3030";
+      context.fillText(
+        "LOW ENERGY",40,185
+      );
+    }
+    context.fillStyle="white";
+    context.font="14px Arial";
+    let status=(this.ship.pulseEnergy/this.ship.maxPulseEnergy)>0.9?"READY":"CHARGING";
+    
+    context.fillText(
+      status,200,157
+    );
+    context.shadowBlur=0;
+    context.fillStyle="#00ff88";
+    context.font="14px Arial";
+    context.fillText(
+      "ENGINE ONLINE",40,175
+    );
+  }
+
   render(context,camera){
+    this.time+=0.05;
     this.context.clearRect(
       0,
       0,
@@ -424,6 +499,7 @@ export class Game{
   this.renderBackground(context);
   this.universe.render(this.context,this.camera);
   this.joystick.render(this.context);
+  this.pulseButton.render(this.context);
 
     for(const object of this.objects){
       if(object.visible){
@@ -447,6 +523,11 @@ export class Game{
     );
   }
 
+  context.save();
+  context.fillStyle="rgba(0,20,50,0.45)";
+  context.roundRect(20,20,260,160,20);
+  context.fill();
+
   this.drawUI(context);
 
   if(this.gameOver){
@@ -465,15 +546,20 @@ export class Game{
     );
   }
 
-  context.save();
-  context.fillStyle="red";
-  context.textAlign="center";
   context.font="28px Arial";
-  context.fillText(
-    `LIVES: ${this.lives}`,
-    75,
-    85
-  );
+  for(let i=0;i<this.lives;i++){
+    context.fillStyle="#ff3030";
+    context.beginPath();
+    context.arc(
+      45+i*45,90,
+      10,0,Math.PI*2
+    );
+    context.fill();
+  }
+
+  this.drawPulse(context);
+
+  context.shadowBlur=0;
 
   context.restore();
   }

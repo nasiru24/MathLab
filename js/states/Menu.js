@@ -72,7 +72,6 @@ export class Menu{
     );
     context.stroke();
 
-    context.save();
     const gradient=context.createLinearGradient(
       0,0,0,height
     );
@@ -85,7 +84,7 @@ export class Menu{
     );
     const titleSize=Math.min(width*0.12,60);
     const float=Math.sin(Date.now()*0.003)*8;
-    context.save();
+
     context.shadowColor="#00ffff";
     context.shadowBlur=20;
     context.fillStyle="#ffffff";
@@ -108,7 +107,6 @@ export class Menu{
     this.startButton.y=centerY+20;
     let pulse=Math.sin(Date.now()/300)*8;
 
-    context.save();
     context.shadowColor="#00ffff";
     context.shadowBlur=2+pulse;
     context.fillStyle="#112244";
@@ -147,7 +145,6 @@ export class Menu{
       centerX, this.startButton.y+150
     );
 
-    context.save();
     context.shadowBlur=0;
     context.font="18px Arial";
     context.fillStyle="#888";

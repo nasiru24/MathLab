@@ -4,6 +4,7 @@ import { Particle } from "../effects/Particle.js";
 import { Vector2 } from "../math/Vector2.js";
 import { Bullet } from "./Bullet.js";
 import { EngineParticle } from "./EngineParticle.js";
+import { Pulse } from "./Pulse.js";
 
 export class Ship extends GameObject{
   constructor(x,y,game){
@@ -31,6 +32,13 @@ export class Ship extends GameObject{
     this.alive=true;
     this.visible=true;
     this.blinkTimer=0;
+    this.pulseCooldown=0;
+    this.pulseRate=300;
+    this.canPulse=true;
+    this.pulseEnergy=100;
+    this.maxPulseEnergy=100;
+    this.pulseCost=50;
+    this.pulseRecharge=0.15;
 
   }
 
@@ -81,8 +89,6 @@ if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up || moveY<-0.2){
 
       let moveX=input.moveX;
       let moveY=input.moveY;
-      //this.velocity.x+=moveX*this.enginePower;
-      //this.velocity.y+=moveY*this.enginePower;
 
     const thrustPower=0.15;
     this.velocity.x+=Math.cos(this.rotation)*thrustPower;
@@ -127,6 +133,18 @@ if(this.fireCooldown>0){
   this.game.add(bullet);
   this.fireCooldown=this.fireRate;
   this.game.audio.play("laser");
+}
+
+if((input.keys["KeyE"] || input.touch.pulse || input.pulse) && this.pulseCooldown<=0 && this.pulseEnergy>=this.pulseCost){
+  this.createPulse();
+  this.pulseEnergy-=this.pulseCost;
+  this.pulseCooldown=this.pulseRate;
+}
+if(this.pulseCooldown>0){
+  this.pulseCooldown--;
+}
+if(this.pulseEnergy<this.maxPulseEnergy){
+  this.pulseEnergy+=this.pulseRecharge;
 }
 
 
@@ -209,6 +227,13 @@ die(){
     this.velocity.y=0;
     this.game.loseLife();
     return;
+  }
+
+  createPulse(){
+    const pulse=new Pulse(
+      this.position.x,this.position.y
+    );
+    this.game.add(pulse);
   }
 
 

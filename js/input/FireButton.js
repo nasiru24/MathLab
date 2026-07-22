@@ -5,6 +5,7 @@ export class FireButton{
     this.y=window.innerHeight*0.82;
     this.pressed=false;
     this.setupControls();
+    this.pulse=0;
   }
 
   setupControls(){
@@ -14,7 +15,6 @@ export class FireButton{
           touch.clientX-this.x,touch.clientY-this.y
         );
         if(distance<this.radius){
-          console.log("Fire pressed");
           this.pressed=true;
         }
       }
@@ -22,19 +22,71 @@ export class FireButton{
     window.addEventListener("touchend",()=>{
       this.pressed=false;
     });
+
+    
+  }
+
+  update(){
+    this.pulse+=0.08;
   }
 
   render(context){
+    let radius=this.radius;
+    if(!this.pressed){
+      radius+=Math.sin(this.pulse)*2;
+    }else{radius-=4;}
+    if(this.pressed){
+      radius-=4;
+    }else{radius+=Math.sin(this.pulse)*2;}
+
     context.save();
+    context.strokeStyle="rgba(255,255,255,0.8)";
+    context.lineWidth=2;
+    context.beginPath();
+    context.moveTo(this.x-10,this.y);
+    context.lineTo(this.x+10,this.y);
+    context.moveTo(this.x,this.y-10);
+    context.lineTo(this.x,this.y+10);
+    context.stroke();
+
+    context.fillStyle="#ffffff";
+    context.beginPath();
+    context.arc(
+      this.x,this.y,
+      3,0,Math.PI*2
+    );
+    context.fill();
+
+    context.shadowBlur=this.pressed?30:15;
+    context.shadowColor="#ff3030";
+
     context.globalAlpha=0.35;
     context.beginPath();
     context.arc(
       this.x,this.y,
-      this.radius,0,
+      radius,0,
       Math.PI*2
     );
-    context.fillStyle="red";
+    const gradient=context.createRadialGradient(
+      this.x-10,this.y-10,
+      5,this.x,this.y,
+      radius
+    );
+    gradient.addColorStop(0,"#ff9b9b");
+    gradient.addColorStop(0.4,"#ff3b3b");
+    gradient.addColorStop(1,"#7a0000");
+    context.fillStyle=gradient;
     context.fill();
+
+    context.strokeStyle="rgba(255,255,255,0.35)";
+    context.lineWidth=3;
+    context.beginPath();
+    context.arc(
+      this.x,this.y,
+      radius+8,0,
+      Math.PI*2
+    );
+    context.stroke();
 
     context.globalAlpha=1;
     context.fillStyle="white";

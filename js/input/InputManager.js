@@ -1,13 +1,12 @@
 export class InputManager{
-  constructor(input,joystick,fireButton){
+  constructor(input,joystick,fireButton,pulseButton){
     this.input=input;
     this.joystick=joystick;
     this.fireButton=fireButton;
+    this.pulseButton=pulseButton;
   }
 
   update(){
-    console.log("Joystick:",this.input.moveX,this.input.moveY);
-    console.log("Fire:",this.input.fire);
     this.input.moveX=0;
     this.input.moveY=0;
     if(this.input.controlMode==="joystick"){
@@ -19,5 +18,7 @@ export class InputManager{
       this.input.moveY=this.input.touchDown-this.input.touchUp;
     }
     this.input.fire=this.fireButton.pressed;
+    this.input.pulse=this.pulseButton.pressed;
+    this.input.keys["KeyE"]=this.pulseButton.pressed;
   }
 }

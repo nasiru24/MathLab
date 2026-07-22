@@ -2,6 +2,7 @@ export class TouchControls{
   constructor(input){
     this.input=input;
     this.buttons=[];
+
     this.createButton("","up",80,window.innerHeight-180);
     this.createButton("","left",20,window.innerHeight-100);
     this.createButton("","right",140,window.innerHeight-100);

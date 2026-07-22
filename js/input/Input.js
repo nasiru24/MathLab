@@ -4,6 +4,7 @@ export class Input{
   this.moveX=0;
   this.moveY=0;
   this.fire=false;
+  this.pulse=false;
   this.keys={};
   this.touch={
     up:false,
