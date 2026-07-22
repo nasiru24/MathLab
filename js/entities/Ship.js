@@ -53,17 +53,17 @@ export class Ship extends GameObject{
       let moveX=input.moveX || 0;
       let moveY=input.moveY || 0;
 
-    if(input.keys["KeyA"]||input.keys["ArrowLeft"] || input.touch.left){
+    if(input.keys["KeyA"]||input.keys["ArrowLeft"] || input.touch.left || moveX<-0.2){
       this.rotation-=this.rotationSpeed;
     }
 
-  if(input.keys["KeyD"]||input.keys["ArrowRight"] || input.touch.right){
+  if(input.keys["KeyD"]||input.keys["ArrowRight"] || input.touch.right || moveX>0.2){
     this.rotation+=this.rotationSpeed;
   }
 
   this.acceleration=new Vector2(0,0);
   
-if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up){
+if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up || moveY<-0.2){
   this.acceleration.x=Math.cos(this.rotation)*this.enginePower;
   this.acceleration.y=Math.sin(this.rotation)*this.enginePower;
 
@@ -81,8 +81,8 @@ if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up){
 
       let moveX=input.moveX;
       let moveY=input.moveY;
-      this.velocity.x+=moveX*this.enginePower;
-      this.velocity.y+=moveY*this.enginePower;
+      //this.velocity.x+=moveX*this.enginePower;
+      //this.velocity.y+=moveY*this.enginePower;
 
     const thrustPower=0.15;
     this.velocity.x+=Math.cos(this.rotation)*thrustPower;
