@@ -1,39 +1,30 @@
 export class FireButton{
   constructor(){
     let bottomOffset=40;
-    if(window.innerWidth<700){
-      bottomOffset=95;
+    if(window.innerWidth<600){
+      bottomOffset=100;
     }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
-    const margin=window.innerWidth<700?25:40;
+    const margin=window.innerWidth<600?25:40;
     const bottom=window.innerHeight-margin;
     this.x=window.innerWidth-this.radius-margin;
     this.y=window.innerHeight-this.radius-bottomOffset;
     this.pressed=false;
     this.setupControls();
     this.pulse=0;
-    this.resize();
-  }
-
-  resize(){
-    let bottomOffset=40;
-    if(window.innerWidth<700){
-      bottomOffset=95;
-    }
-    const scale=Math.min(window.innerWidth/400,1.4);
-    this.radius=40*scale;
-    const margin=window.innerWidth<700?25:40;
-    const bottom=window.innerHeight-margin;
-    this.x=window.innerWidth-this.radius-margin;
-    this.y=window.innerHeight-this.radius-bottomOffset;
+    window.addEventListener("resize",()=>{
+      this.resize();
+    });
   }
 
   setupControls(){
     window.addEventListener("touchstart",(event)=>{
       for(const touch of event.touches){
+        let rect=document.querySelector("canvas").getBoundingClientRect();
         const distance=Math.hypot(
-          touch.clientX-this.x,touch.clientY-this.y
+          (touch.clientX-rect.left)-this.x,
+          (touch.clientY-rect.top)-this.y
         );
         if(distance<this.radius){
           this.pressed=true;
@@ -45,6 +36,20 @@ export class FireButton{
     });
     
   }
+
+  resize(){
+    let bottomOffset=40;
+    if(window.innerWidth<600){
+      bottomOffset=100;
+    }
+    const scale=Math.min(window.innerWidth/400,1.4);
+    this.radius=40*scale;
+    const margin=window.innerWidth<600?25:40;
+    const bottom=window.innerHeight-margin;
+    this.x=window.innerWidth-this.radius-margin;
+    this.y=window.innerHeight-this.radius-bottomOffset;
+  }
+
 
   update(){
     this.pulse+=0.08;

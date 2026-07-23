@@ -17,6 +17,7 @@ import { InputManager } from "../input/InputManager.js";
 import { FireButton } from "../input/FireButton.js";
 import { Vector2 } from "../math/Vector2.js";
 import { PulseButton } from "../input/PulseButton.js";
+import { isTouchDevice } from "../utils/Device.js";
 
 export class Game{
   constructor(canvas){
@@ -61,6 +62,8 @@ export class Game{
       x:-1,
       y:-1
     };
+    this.isTouch=isTouchDevice();
+
     const length=Math.hypot(this.light.x, this.light.y);
     this.light.x/=length;
     this.light.y/=length;
@@ -80,7 +83,7 @@ export class Game{
     this.fireButton=new FireButton();
     this.pulseButton=new PulseButton();
     this.touchControls=new TouchControls(this.input);
-    this.inputManager=new InputManager(
+    this.inputManager=new InputManager(this,
       this.input,this.joystick,
       this.fireButton,this.pulseButton);
     this.time=0;
@@ -164,8 +167,12 @@ export class Game{
     }
     this.checkPulses();
     this.inputManager.update();
+
+    if(this.isTouch){
     this.joystick.update();
+    this.fireButton.update();
     this.pulseButton.update();
+    }
 
     if(this.waveMessageTimer>0){
       this.waveMessageTimer--;
@@ -516,7 +523,6 @@ export class Game{
     }
   this.renderBackground(context);
   this.universe.render(this.context,this.camera);
-  this.joystick.render(this.context);
 
     for(const object of this.objects){
       if(object.visible){
@@ -526,8 +532,12 @@ export class Game{
       );
     }
   }
+
+  if(this.isTouch){
+  this.joystick.render(this.context);
   this.fireButton.render(this.context);
   this.pulseButton.render(this.context);
+  }
 
   if(this.waveMessageTimer>0){
     let hudSize=window.innerWidth<600?24:40;

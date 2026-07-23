@@ -1,7 +1,13 @@
+import { MenuStar } from "./MenuStar.js";
+
 export class Menu{
   constructor(game){
     this.game=game;
     this.canvas=game.canvas;
+    this.stars=[];
+    for(let i=0;i<120;i++){
+      this.stars.push(new MenuStar(this.game));
+    }
     this.mouse={
       x:0,
       y:0
@@ -26,10 +32,14 @@ export class Menu{
       this.mouse.x=e.clientX-rect.left;
       this.mouse.y=e.clientY-rect.top;
     });
+
   }
 
   
   update(){
+    for(const star of this.stars){
+    star.update();
+  }
 
     let button=this.startButton;
     if(this.clicked && this.mouse.x>button.x && this.mouse.x<button.x + button.width &&
@@ -43,6 +53,7 @@ export class Menu{
       this.game.startGame();
       this.clicked=false;
   }
+
   }
 
 
@@ -54,6 +65,9 @@ export class Menu{
   }
 
   render(context,camera){
+    for(const star of this.stars){
+      star.render(context);
+    }
     const width=context.canvas.width;
     const height=context.canvas.height;
     const centerX=width/2;

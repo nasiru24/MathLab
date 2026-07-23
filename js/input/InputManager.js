@@ -1,5 +1,6 @@
 export class InputManager{
-  constructor(input,joystick,fireButton,pulseButton){
+  constructor(game,input,joystick,fireButton,pulseButton){
+    this.game=game;
     this.input=input;
     this.joystick=joystick;
     this.fireButton=fireButton;

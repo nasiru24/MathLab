@@ -1,7 +1,12 @@
 export class MenuStar{
-  constructor(width,height){
-    this.width=width;
-    this.height=height;
+  constructor(game,width,height){
+    this.game=game;
+    //this.canvas=this.game.canvas;
+    this.width=this.game.canvas.width;
+    this.height=this.game.canvas.height;
+    this.radius=Math.random()*2+1;
+    this.speed=Math.random()*0.4+0.2;
+    this.alpha=Math.random()*0.5+0.5;
     this.reset();
   }
 
@@ -9,8 +14,8 @@ export class MenuStar{
     this.x=Math.random()*this.width;
     this.y=Math.random()*this.height;
     this.radius=Math.random()*2+1;
-    this.speed=Math.random()*0.5+0.2;
-    this.alpha=Math.random();
+    this.speed=Math.random()*0.4+0.2;
+    this.alpha=Math.random()*0.5+0.5;
     this.fadeSpeed=Math.random()*0.02;
   }
 
@@ -21,8 +26,8 @@ export class MenuStar{
       this.fadeSpeed*=-1;
 
     }
-    if(this.y>this.height){
-      this.y=0;
+    if(this.y>this.height+5){
+      this.y=-5;
       this.x=Math.random()*this.width;
     }
   }

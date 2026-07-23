@@ -2,7 +2,7 @@ export class Joystick{
   constructor(){
     let bottomOffset=40;
     if(window.innerWidth<700){
-      bottomOffset=95;
+      bottomOffset=100;
     }
     const margin=window.innerWidth<700?25:40;
     const scale=Math.min(window.innerWidth/400,1.4);
@@ -27,9 +27,10 @@ export class Joystick{
   setupControls(){
     window.addEventListener(
       "touchstart",(event)=>{
+        let rect=document.querySelector("canvas").getBoundingClientRect();
         const touch=event.touches[0];
-        const distance=Math.hypot(touch.clientX-this.baseX,
-          touch.clientY-this.baseY
+        const distance=Math.hypot((touch.clientX-rect.left)-this.baseX,
+          (touch.clientY-rect.top)-this.baseY
         );
         if(distance<this.radius*2){
           this.active=true;
@@ -40,8 +41,9 @@ export class Joystick{
     window.addEventListener("touchmove",(event)=>{
       if(!this.active) return;
       const touch=event.touches[0];
-      let dx=touch.clientX-this.baseX;
-      let dy=touch.clientY-this.baseY;
+      let rect=document.querySelector("canvas").getBoundingClientRect();
+      let dx=(touch.clientX-rect.left)-this.baseX;
+      let dy=(touch.clientY-rect.top)-this.baseY;
       let distance=Math.hypot(dx,dy);
 
       if(distance>this.radius){
@@ -73,7 +75,7 @@ export class Joystick{
   resize(){
     let bottomOffset=40;
     if(window.innerWidth<700){
-      bottomOffset=95;
+      bottomOffset=100;
     }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;

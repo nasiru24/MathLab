@@ -1,42 +1,30 @@
 export class PulseButton{
   constructor(x,y,radius){
     let bottomOffset=40;
-    if(window.innerWidth<700){
-      bottomOffset=95;
+    if(window.innerWidth<600){
+      bottomOffset=100;
     }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
-    const spacing=this.radius*2+20;
-    const margin=window.innerWidth<700?25:40;
+    const spacing=this.radius*2+32;
+    const margin=window.innerWidth<600?25:40;
     const bottom=window.innerHeight-this.radius-40;
     this.x=window.innerWidth-this.radius-margin-spacing;
     this.y=window.innerHeight-this.radius-bottomOffset;
     this.pressed=false;
     this.pulse=0;
-    this.resize();
     this.setupControls();
+    window.addEventListener("resize",()=>{
+      this.resize();
+    });
   }
-
-  resize(){
-    let bottomOffset=40;
-    if(window.innerWidth<700){
-      bottomOffset=95;
-    }
-    const scale=Math.min(window.innerWidth/400,1.4);
-    this.radius=40*scale;
-    const bottom=window.innerHeight-this.radius-40;
-    const margin=window.innerWidth<700?25:40;
-    const spacing=this.radius*2+20;
-    this.x=window.innerWidth-this.radius-margin-spacing;
-    this.y=window.innerHeight-this.radius-bottomOffset;
-  }
-
 
   setupControls(){
-    console.log("PULSE PRESSED");
     window.addEventListener("touchstart",(event)=>{
       for(const touch of event.touches){
-        let distance=Math.hypot(touch.clientX-this.x,touch.clientY-this.y);
+        let rect=document.querySelector("canvas").getBoundingClientRect();
+        let distance=Math.hypot((touch.clientX-rect.left)-this.x,
+        (touch.clientY-rect.top)-this.y);
         if(distance<this.radius){
           this.pressed=true;
         }
@@ -46,18 +34,31 @@ export class PulseButton{
       this.pressed=false;
     });
     window.addEventListener("mousedown",(event)=>{
-      console.log("Mouse Down");
-        let distance=Math.hypot(event.clientX-this.x,event.clientY-this.y);
+      let rect=document.querySelector("canvas").getBoundingClientRect();
+        let distance=Math.hypot((event.clientX-rect.left)-this.x,
+        (event.clientY-rect.top)-this.y);
         if(distance<this.radius){
-          console.log("Pulse Mouse");
           this.pressed=true;
         }
       }
     );
     window.addEventListener("mouseup",()=>{
-      console.log("Mouse up");
       this.pressed=false;
     });
+  }
+
+  resize(){
+    let bottomOffset=40;
+    if(window.innerWidth<600){
+      bottomOffset=100;
+    }
+    const scale=Math.min(window.innerWidth/400,1.4);
+    this.radius=40*scale;
+    const bottom=window.innerHeight-this.radius-40;
+    const margin=window.innerWidth<600?25:40;
+    const spacing=this.radius*2+32;
+    this.x=window.innerWidth-this.radius-margin-spacing;
+    this.y=window.innerHeight-this.radius-bottomOffset;
   }
 
   update(){
