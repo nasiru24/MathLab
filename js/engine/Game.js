@@ -84,6 +84,12 @@ export class Game{
       this.input,this.joystick,
       this.fireButton,this.pulseButton);
     this.time=0;
+
+    window.addEventListener("resize",()=>{
+      this.joystick.resize();
+      this.fireButton.resize();
+      this.pulseButton.resize();
+    });
   }
 
   addScore(points){
@@ -152,14 +158,6 @@ export class Game{
     this.inputManager.update();
     this.joystick.update();
     this.pulseButton.update();
-    if(this.pulseButton.pressed && !this.input.pulsing){
-      this.ship.pulse();
-      this.input.pulsing=true;
-    }
-    console.log("pulse state:",this.pulseButton.pressed);
-    if(!this.pulseButton.pressed){
-      this.input.pulsing=false;
-    }
 
     if(this.waveMessageTimer>0){
       this.waveMessageTimer--;

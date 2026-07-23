@@ -33,6 +33,7 @@ export class Ship extends GameObject{
     this.visible=true;
     this.blinkTimer=0;
     this.pulseCooldown=0;
+    this.maxPulseCooldown=300;
     this.pulseRate=300;
     this.canPulse=true;
     this.pulseEnergy=100;
@@ -134,6 +135,11 @@ if(this.fireCooldown>0){
   this.fireCooldown=this.fireRate;
   this.game.audio.play("laser");
 }
+
+/*if(this.input.pulse && this.pulseCooldown<=0){
+  this.activatePulse();
+  this.pulseCooldown=this.maxPulseCooldown;
+}*/
 
 if((input.keys["KeyE"] || input.touch.pulse || input.pulse) && this.pulseCooldown<=0 && this.pulseEnergy>=this.pulseCost){
   this.createPulse();

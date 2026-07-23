@@ -1,16 +1,27 @@
 export class FireButton{
   constructor(){
-    this.radius=45;
-    const bottom=window.innerHeight-80;
-    this.x=window.innerWidth-80;
-    this.y=bottom;
+    const scale=Math.min(window.innerWidth/400,1.4);
+    this.radius=40*scale;
+    const margin=window.innerWidth<700?25:40;
+    const bottom=window.innerHeight-margin;
+    this.x=window.innerWidth-this.radius-margin;
+    this.y=window.innerHeight-this.radius-margin;
     this.pressed=false;
     this.setupControls();
     this.pulse=0;
+    this.resize();
+  }
+
+  resize(){
+    const scale=Math.min(window.innerWidth/400,1.4);
+    this.radius=40*scale;
+    const margin=window.innerWidth<700?25:40;
+    const bottom=window.innerHeight-margin;
+    this.x=window.innerWidth-this.radius-margin;
+    this.y=window.innerHeight-this.radius-margin;
   }
 
   setupControls(){
-    console.log("FIRE PRESSED");
     window.addEventListener("touchstart",(event)=>{
       for(const touch of event.touches){
         const distance=Math.hypot(
@@ -24,7 +35,6 @@ export class FireButton{
     window.addEventListener("touchend",()=>{
       this.pressed=false;
     });
-
     
   }
 
