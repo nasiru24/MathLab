@@ -1,11 +1,16 @@
 export class PulseButton{
   constructor(x,y,radius){
+    let bottomOffset=40;
+    if(window.innerWidth<700){
+      bottomOffset=70;
+    }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
     const spacing=this.radius*2+20;
     const margin=window.innerWidth<700?25:40;
+    const bottom=window.innerHeight-this.radius-40;
     this.x=window.innerWidth-this.radius-margin-spacing;
-    this.y=window.innerHeight-this.radius-margin;
+    this.y=window.innerHeight-this.radius-bottomOffset;
     this.pressed=false;
     this.pulse=0;
     this.resize();
@@ -13,12 +18,17 @@ export class PulseButton{
   }
 
   resize(){
+    let bottomOffset=40;
+    if(window.innerWidth<700){
+      bottomOffset=70;
+    }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
+    const bottom=window.innerHeight-this.radius-40;
     const margin=window.innerWidth<700?25:40;
     const spacing=this.radius*2+20;
     this.x=window.innerWidth-this.radius-margin-spacing;
-    this.y=window.innerHeight-this.radius-margin;
+    this.y=window.innerHeight-this.radius-bottomOffset;
   }
 
 

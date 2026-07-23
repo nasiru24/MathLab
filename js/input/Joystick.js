@@ -1,10 +1,14 @@
 export class Joystick{
   constructor(){
+    let bottomOffset=40;
+    if(window.innerWidth<700){
+      bottomOffset=70;
+    }
     const margin=window.innerWidth<700?25:40;
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
     this.baseX=this.radius+margin;
-    this.baseY=window.innerHeight-this.radius-margin;
+    this.baseY=window.innerHeight-this.radius-bottomOffset;
     this.knobX=this.baseX;
     this.knobY=this.baseY;
     this.knobRadius=this.radius*0.45;
@@ -67,11 +71,15 @@ export class Joystick{
   }
 
   resize(){
+    let bottomOffset=40;
+    if(window.innerWidth<700){
+      bottomOffset=70;
+    }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
     const margin=window.innerWidth<700?25:40;
     this.baseX=this.radius+margin;
-    this.baseY=window.innerHeight-this.radius-margin;
+    this.baseY=window.innerHeight-this.radius-bottomOffset;
     this.knobRadius=this.radius*0.45;
     this.targetX=this.baseX;
     this.targetY=this.baseY;

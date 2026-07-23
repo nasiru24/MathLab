@@ -1,11 +1,15 @@
 export class FireButton{
   constructor(){
+    let bottomOffset=40;
+    if(window.innerWidth<700){
+      bottomOffset=70;
+    }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
     const margin=window.innerWidth<700?25:40;
     const bottom=window.innerHeight-margin;
     this.x=window.innerWidth-this.radius-margin;
-    this.y=window.innerHeight-this.radius-margin;
+    this.y=window.innerHeight-this.radius-bottomOffset;
     this.pressed=false;
     this.setupControls();
     this.pulse=0;
@@ -13,12 +17,16 @@ export class FireButton{
   }
 
   resize(){
+    let bottomOffset=40;
+    if(window.innerWidth<700){
+      bottomOffset=70;
+    }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
     const margin=window.innerWidth<700?25:40;
     const bottom=window.innerHeight-margin;
     this.x=window.innerWidth-this.radius-margin;
-    this.y=window.innerHeight-this.radius-margin;
+    this.y=window.innerHeight-this.radius-bottomOffset;
   }
 
   setupControls(){
