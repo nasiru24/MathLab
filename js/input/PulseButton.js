@@ -2,7 +2,7 @@ export class PulseButton{
   constructor(x,y,radius){
     let bottomOffset=40;
     if(window.innerWidth<700){
-      bottomOffset=70;
+      bottomOffset=95;
     }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;
@@ -20,7 +20,7 @@ export class PulseButton{
   resize(){
     let bottomOffset=40;
     if(window.innerWidth<700){
-      bottomOffset=70;
+      bottomOffset=95;
     }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;

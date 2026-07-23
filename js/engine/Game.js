@@ -90,6 +90,14 @@ export class Game{
       this.fireButton.resize();
       this.pulseButton.resize();
     });
+
+    window.addEventListener("resize",()=>{
+      this.canvas.width=window.innerWidth;
+      this.canvas.height=window.innerHeight;
+    });
+    window.addEventListener("resize",()=>{
+      this.camera.resize();
+    });
   }
 
   addScore(points){

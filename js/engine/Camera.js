@@ -1,19 +1,25 @@
 import { Vector2 } from "../math/Vector2.js";
 export class Camera{
-  constructor(width,height){
+  constructor(game,width,height){
     this.position=new Vector2(0,0);
-    this.width=width;
-    this.height=height;
+    this.width=window.innerWidth;
+    this.height=window.innerHeight;
     this.target=null;
     this.smoothness=0.08;
     this.shakeStrength=0;
     this.shakeDuration=0;
     this.offset=new Vector2(0,0);
     this.deadZone=100;
+    this.resize();
   }
 
   follow(object){
     this.target=object;
+  }
+
+  resize(){
+    this.width=window.innerWidth;
+    this.height=window.innerHeight;
   }
 
   update(){

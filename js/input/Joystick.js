@@ -2,7 +2,7 @@ export class Joystick{
   constructor(){
     let bottomOffset=40;
     if(window.innerWidth<700){
-      bottomOffset=70;
+      bottomOffset=95;
     }
     const margin=window.innerWidth<700?25:40;
     const scale=Math.min(window.innerWidth/400,1.4);
@@ -73,7 +73,7 @@ export class Joystick{
   resize(){
     let bottomOffset=40;
     if(window.innerWidth<700){
-      bottomOffset=70;
+      bottomOffset=95;
     }
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=40*scale;

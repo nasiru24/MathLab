@@ -136,11 +136,6 @@ if(this.fireCooldown>0){
   this.game.audio.play("laser");
 }
 
-/*if(this.input.pulse && this.pulseCooldown<=0){
-  this.activatePulse();
-  this.pulseCooldown=this.maxPulseCooldown;
-}*/
-
 if((input.keys["KeyE"] || input.touch.pulse || input.pulse) && this.pulseCooldown<=0 && this.pulseEnergy>=this.pulseCost){
   this.createPulse();
   this.pulseEnergy-=this.pulseCost;
