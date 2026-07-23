@@ -1,18 +1,39 @@
 export class PulseButton{
-  constructor(x,y,radius=45){
-    this.x=window.innerWidth-270;
-    this.y=window.innerHeight-140;
-    this.radius=radius;
+  constructor(x,y,radius){
+    console.log("pulseButton constructor");
+    const bottom=window.innerHeight-80;
+    this.x=window.innerWidth-170;
+    this.y=bottom;
+    this.radius=window.innerWidth<600?35:45;
     this.pressed=false;
     this.pulse=0;
+    this.setupControls();
+
   }
+
+  setupControls(){
+    console.log("PULSE PRESSED");
+    window.addEventListener("touchstart",(event)=>{
+      for(const touch of event.touches){
+        let distance=Math.hypot(touch.clientX-this.x,touch.clientY-this.y);
+        if(distance<this.radius){
+          console.log("INSIDE PULSE BUTTON");
+          this.pressed=true;
+        }
+      }
+    });
+
+    window.addEventListener("touchend",()=>{
+      this.pressed=false;
+    });
+  }
+  
 
   update(){
     this.pulse+=0.08;
   }
 
   render(context){
-   // if(!this.visible) return;
    this.radius=this.pressed?55:45;
     context.save();
     context.shadowBlur=this.pressed?40:20;
@@ -40,7 +61,7 @@ export class PulseButton{
     context.shadowBlur=0;
 
     context.fillStyle="white";
-    context.font="bold 24px Arial";
+    context.font="bold 22px Arial";
     context.textAlign="center";
     context.textBaseline="middle";
     context.fillText(

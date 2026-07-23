@@ -1,14 +1,16 @@
 export class FireButton{
   constructor(){
     this.radius=45;
-    this.x=window.innerWidth*0.85;
-    this.y=window.innerHeight*0.82;
+    const bottom=window.innerHeight-80;
+    this.x=window.innerWidth-80;
+    this.y=bottom;
     this.pressed=false;
     this.setupControls();
     this.pulse=0;
   }
 
   setupControls(){
+    console.log("FIRE PRESSED");
     window.addEventListener("touchstart",(event)=>{
       for(const touch of event.touches){
         const distance=Math.hypot(

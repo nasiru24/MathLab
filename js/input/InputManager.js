@@ -19,6 +19,5 @@ export class InputManager{
     }
     this.input.fire=this.fireButton.pressed;
     this.input.pulse=this.pulseButton.pressed;
-    this.input.keys["KeyE"]=this.pulseButton.pressed;
   }
 }

@@ -4,7 +4,7 @@ export class Joystick{
     this.baseY=window.innerHeight*0.82;
     this.knobX=this.baseX;
     this.knobY=this.baseY;
-    this.radius=Math.min(window.innerWidth,window.innerHeight)*0.08;
+    this.radius=Math.min(window.innerWidth,window.innerHeight)<600?55:80;
     this.knobRadius=this.radius*0.45;
     this.active=false;
     this.moveX=0;

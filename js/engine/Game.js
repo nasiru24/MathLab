@@ -152,6 +152,14 @@ export class Game{
     this.inputManager.update();
     this.joystick.update();
     this.pulseButton.update();
+    if(this.pulseButton.pressed && !this.input.pulsing){
+      this.ship.pulse();
+      this.input.pulsing=true;
+    }
+    console.log("pulse state:",this.pulseButton.pressed);
+    if(!this.pulseButton.pressed){
+      this.input.pulsing=false;
+    }
 
     if(this.waveMessageTimer>0){
       this.waveMessageTimer--;
@@ -423,9 +431,10 @@ export class Game{
 
   drawUI(context){
     let formattedScore=String(this.score).padStart(6,"0");
+    let size=window.innerWidth<600?20:24;
     context.save();
     context.fillStyle="white";
-    context.font="24px Arial";
+    context.font=`${size}px Arial`;
     context.textAlign="center";
     context.fillText(
       `SCORE ${this.score}`.padStart(6,"0"),100,60
@@ -438,6 +447,7 @@ export class Game{
     const height=15;
     const x=30;
     const y=140;
+    let pulseSize=window.innerWidth<600?16:20;
     context.fillStyle="rgba(255,255,255,0.2)";
     context.fillRect(
       x,y,width,height
@@ -451,7 +461,7 @@ export class Game{
       height
     );
     context.fillStyle="white";
-    context.font="18px Arial";
+    context.font=`${pulseSize}px Arial`;
     context.fillText(
       "PULSE CORE",x+20,y-12
     );
@@ -464,16 +474,18 @@ export class Game{
         "LOW ENERGY",40,185
       );
     }
+    let readySize=window.innerWidth<600?12:14;
     context.fillStyle="white";
-    context.font="14px Arial";
+    context.font=`${readySize}px Arial`;
     let status=(this.ship.pulseEnergy/this.ship.maxPulseEnergy)>0.9?"READY":"CHARGING";
     
     context.fillText(
       status,200,157
     );
+    let onlineSize=window.innerWidth<600?12:14;
     context.shadowBlur=0;
     context.fillStyle="#00ff88";
-    context.font="14px Arial";
+    context.font=`${onlineSize}px Arial`;
     context.fillText(
       "ENGINE ONLINE",40,175
     );
@@ -499,7 +511,6 @@ export class Game{
   this.renderBackground(context);
   this.universe.render(this.context,this.camera);
   this.joystick.render(this.context);
-  this.pulseButton.render(this.context);
 
     for(const object of this.objects){
       if(object.visible){
@@ -510,10 +521,12 @@ export class Game{
     }
   }
   this.fireButton.render(this.context);
+  this.pulseButton.render(this.context);
 
   if(this.waveMessageTimer>0){
+    let hudSize=window.innerWidth<600?24:40;
     context.save();
-    context.font="48px Arial";
+    context.font=`${hudSize}px Arial`;
     context.textAlign="center";
     context.fillStyle="white";
     context.fillText(
@@ -546,7 +559,8 @@ export class Game{
     );
   }
 
-  context.font="28px Arial";
+  let livesSize=window.innerWidth<600?24:28;
+  context.font=`${livesSize}px Arial`;
   for(let i=0;i<this.lives;i++){
     context.fillStyle="#ff3030";
     context.beginPath();
