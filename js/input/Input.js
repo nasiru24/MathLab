@@ -5,12 +5,14 @@ export class Input{
   this.moveY=0;
   this.fire=false;
   this.pulse=false;
+  this.weaponSwitch=false;
   this.keys={};
   this.touch={
     up:false,
     left:false,
     right:false,
     fire:false
+
   };
 
 window.addEventListener("keydown",(event)=>{

@@ -1,5 +1,6 @@
 import { Nebula } from "../entities/Nebula.js";
 import {Star} from "../entities/Star.js";
+import { ShootingStar } from "../states/ShootingStar.js";
 export class Universe {
   constructor(game){
     this.game=game;
@@ -11,6 +12,12 @@ export class Universe {
     this.generate();
     this.generateAroundPlayer();
     this.generateNebulas();
+    this.shootingStars=[];
+    for(let i=0;i<3;i++){
+      this.shootingStars.push(
+        new ShootingStar(this.game)
+      );
+    }
   }
 
 
@@ -107,6 +114,9 @@ export class Universe {
     nebula.update();
   }
   this.updateNebulas();
+  for(const shooting of this.shootingStars){
+    shooting.update();
+  }
   for(const star of this.stars){
     const dx=star.position.x-camera.position.x;
     const dy=star.position.y-camera.position.y;
@@ -132,6 +142,9 @@ render(context, camera){
   }
   for(const star of this.stars){
     star.render(context, camera);
+  }
+  for(const shooting of this.shootingStars){
+    shooting.render(context);
   }
 }
 }

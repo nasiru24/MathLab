@@ -40,6 +40,7 @@ export class Ship extends GameObject{
     this.maxPulseEnergy=100;
     this.pulseCost=50;
     this.pulseRecharge=0.15;
+    this.currentWeapon="pulse";
 
   }
 
@@ -125,15 +126,34 @@ if(this.fireCooldown>0){
   this.fireCooldown--;
 }
 
-  if(input.keys["Space"] || input.touch.fire || input.fire && this.fireCooldown<=0){
-   const bullet=new Bullet(
+  if(input.keys["Space"] || input.touch.fire || input.fire && 
+    this.fireCooldown<=0){
+    const bullet=new Bullet(
     this.position.x+Math.cos(this.rotation)*30,
     this.position.y+Math.sin(this.rotation)*30,
     this.rotation
   );
+  if(this.currentWeapon==="pulse"){
+    this.firePulse();
+  }
+  if(this.currentWeapon==="twin"){
+    this.fireTwinCannons();
+  }
   this.game.add(bullet);
   this.fireCooldown=this.fireRate;
   this.game.audio.play("laser");
+}
+if(input.keys["KeyT"]){
+  this.fireTwinCannons();
+}
+if(this.fireCooldown>0){
+  this.fireCooldown--;
+}
+if(input.keys["KeyQ"] || input.touch.weaponSwitch || input.weaponSwitch && 
+  this.fireCooldown<=0){
+  this.switchWeapon();
+  this.fireCooldown=20;
+  input.weaponSwitch=false;
 }
 
 if((input.keys["KeyE"] || input.touch.pulse || input.pulse) && this.pulseCooldown<=0 && this.pulseEnergy>=this.pulseCost){
@@ -237,6 +257,51 @@ die(){
     this.game.add(pulse);
   }
 
+  /*getCannonPosition(side){
+    const offsetX=side==="left"?-18:18;
+    const offsetY=-50;
+    const cos=Math.cos(this.rotation);
+    const sin=Math.sin(this.rotation);
+    return{
+      x:this.position.x+
+      offsetX*cos-offsetY*sin,
+      y:this.position.y+
+      offsetX*sin+offsetY*cos
+    };
+  }*/
+
+  fireTwinCannons(){
+    const leftX=this.position.x-18;
+    const rightX=this.position.x+18;
+    const cannonY=this.position.y-50;
+    const leftBullet=new Bullet(leftX,cannonY,this.rotation);
+    const rightBullet=new Bullet(rightX,cannonY,this.rotation);
+    this.game.add(leftBullet);
+    this.game.add(rightBullet);
+    this.fireCooldown=this.fireRate;
+    this.game.audio.play("laser");
+  }
+
+  firePulse(){
+    const bullet=new Bullet(
+    this.position.x+Math.cos(this.rotation)*30,
+    this.position.y+Math.sin(this.rotation)*30,
+    this.rotation
+    );
+    this.game.add(bullet);
+    this.fireCooldown=this.fireRate;
+    this.game.audio.play("laser");
+  }
+
+  switchWeapon(){
+    if(this.currentWeapon==="pulse"){
+      this.currentWeapon="twin";
+    }else{
+      this.currentWeapon="pulse";
+    }
+    console.log("weapon",this.currentWeapon);
+  }
+
 
   render(context,camera){
     this.renderWrapEffect(context, camera);
@@ -308,13 +373,35 @@ die(){
     context.lineTo(-12,16);
     context.lineTo(-25,25);
     context.closePath();
-    const bodyGradient=context.createLinearGradient(-20,-30,20,30);
+    const bodyGradient=context.createLinearGradient(-20,0,20,0);
     bodyGradient.addColorStop(0, "#ffffff");
-    bodyGradient.addColorStop(0.3, "#d0d0d0");
-    bodyGradient.addColorStop(0.7, "#8c8c8c");
+    bodyGradient.addColorStop(0.45, "#d8d8d8");
+    bodyGradient.addColorStop(0.7, "#808080");
     bodyGradient.addColorStop(1,"#4f4f4f");
     context.fillStyle=bodyGradient;
+    context.strokeStyle="rgba(255,255,255,0.7)";
+    context.lineWidth=1;
     context.fill();
+    context.stroke();
+    context.beginPath();
+    context.moveTo(-8,-15);
+    context.lineTo(-3,18);
+    context.strokeStyle="rgba(255,255,255,0.8)";
+    context.lineWidth=2;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(10,-60);
+    context.lineTo(10,18);
+    context.strokeStyle="rgba(0,0,0,0.25)";
+    context.lineWidth=2;
+    context.stroke();
+    context.beginPath();
+    context.arc(0,-76,2,0,Math.PI*2);
+    context.fillStyle="white";
+    context.shadowBlur=10;
+    context.shadowColor="white";
+    context.fill();
+    context.shadowBlur=0;
   }
 
   renderCockpit(context){
@@ -328,46 +415,113 @@ die(){
     cockpitGradient.addColorStop(1, "#0b6db0");
     context.fillStyle=cockpitGradient;
     context.fill();
+    context.strokeStyle="rgba(255,255,255,0.45)";
+    context.lineWidth=1.5;
+    context.stroke();
+    context.beginPath();
+    context.ellipse(
+      -2,-15,2,6,Math.PI/6,0,Math.PI*2
+    );
+    context.fillStyle="rgba(255,255,255,0.65)";
+    context.fill();
+    context.beginPath();
+    context.arc(0,-10,3,0,Math.PI*2);
+    context.shadowBlur=12,
+    context.shadowColor="#66ffff"
+    context.fillStyle="#bbffff";
+    context.fill();
+    context.shadowBlur=0;
+    const pulse=(Math.sin(Date.now()*0.006)+1)/2;
+    context.shadowBlur=8+pulse*10;
+    context.fillStyle=`rgba(220,255,255,${0.7+pulse*0.3})`;
+    const scan=Math.sin(Date.now()*0.01)*5;
+    context.beginPath();
+    context.moveTo(-5,-10+scan);
+    context.lineTo(5,-10+scan);
+    context.strokeStyle="rgba(120,255,255,0.45)";
+    context.lineWidth=1;
+    context.stroke();
+    context.beginPath();
+    context.arc(
+      -2,-3,0.8,0,Math.PI*2
+    );
+    context.fillStyle="#00ff66";
+    context.fill();
+    context.beginPath();
+    context.arc(
+      2,-3,0.8,0,Math.PI*2
+
+    );
+    context.fillStyle="#ff4444";
+    context.fill();
   }
 
 
   renderWings(context){
+    context.shadowBlur=12;
     context.beginPath();
-    context.moveTo(-20,12);
-    context.lineTo(-38,30);
-    context.lineTo(-16,20);
+    context.moveTo(-18,8);
+    context.lineTo(-45,28);
+    context.lineTo(-32,34);
+    context.lineTo(-10,18);
     context.closePath();
     context.strokeStyle="#555";
     context.lineWidth=2;
     context.stroke();
-    context.fillStyle="#A0A0A0";
+    const wingGradient=context.createLinearGradient(-45,0,-10,0);
+    wingGradient.addColorStop(0,"#555");
+    wingGradient.addColorStop(0.5,"#cfcfcf");
+    wingGradient.addColorStop(1,"#666");
+    context.fillStyle=wingGradient;
     context.fill();
     context.fillStyle="red";
     context.beginPath();
     context.arc(-38,20,4,0,Math.PI*2);
     context.fill();
 
-
     context.beginPath();
-    context.moveTo(18,12);
-    context.lineTo(38,30);
-    context.lineTo(16,20);
+    context.moveTo(18,8);
+    context.lineTo(45,28);
+    context.lineTo(32,34);
+    context.lineTo(10,18);
     context.closePath();
     context.strokeStyle="#555";
     context.lineWidth=2;
     context.stroke();
-    context.fillStyle="#A0A0A0";
+    context.fillStyle=wingGradient;
     context.fill();
     context.fillStyle="cyan";
     context.beginPath();
     context.arc(38,20,4,0,Math.PI*2);
     context.fill();
+    context.strokeStyle="#444";
+    context.lineWidth=1;
+    context.beginPath();
+    context.moveTo(-18,14);
+    context.lineTo(-37,27);
+    context.stroke();
+    context.shadowBlur=0;
   }
 
   renderCannons(context){
     context.fillStyle="#666";
-    context.fillRect(-20,-36,6,18);
-    context.fillRect(16,-36,6,18);
+    context.fillRect(-21,-42,7,26);
+    context.fillRect(14,-42,7,26);
+    context.fillStyle="#111";
+    context.fillRect(-15,-48,5,8);
+    context.fillRect(15,-48,5,8);
+    context.beginPath();
+    context.arc(-18,-48,3,0,Math.PI*2);
+    context.strokeStyle="#00ffff";
+    context.lineWidth=1;
+    context.stroke();
+    if(this.thrusting){
+      context.shadowBlur=10;
+      context.shadowColor="#00ffff";
+    }
+    context.fill();
+    context.shadowBlur=0;
+    
   }
 
   renderGlow(context){
@@ -386,10 +540,45 @@ die(){
   context.shadowColor="orange";
   context.beginPath();
   context.moveTo(-4,26);
-  context.lineTo(0,Math.random()*18);
+  const flameLength=18+Math.sin(Date.now()*0.03)*5;
+  context.lineTo(0,26+flameLength);
   context.lineTo(4,26);
   context.closePath();
-  context.fillStyle="orange";
+  const flameGradient=context.createLinearGradient(
+    0,26,0,26+flameLength
+  );
+  flameGradient.addColorStop(0,"#ffff99");
+  flameGradient.addColorStop(0.4,"orange");
+  flameGradient.addColorStop(1,"red");
+  context.fillStyle=flameGradient;
+  context.fill();
+  context.beginPath();
+  context.moveTo(-2,26);
+  context.lineTo(0,26+flameLength*0.75);
+  context.lineTo(2,26);
+  context.closePath();
+  context.fillStyle="#66ffff";
+  context.shadowBlur=18;
+  context.shadowColor="#44ffff";
+  context.fill();
+  context.beginPath();
+  context.arc(0,28,2,0,Math.PI*2);
+  context.fillStyle="white";
+  const pulseGlow=18+Math.sin(Date.now()*0.015)*8;
+  context.shadowBlur=pulseGlow;
+  context.shadowColor="white";
+  context.fill();
+  context.beginPath();
+  context.moveTo(-7,25);
+  context.lineTo(-12,29);
+  context.lineTo(-7,31);
+  context.fillStyle="rgba(0,255,255,0.4)";
+  context.fill();
+  context.beginPath();
+  context.moveTo(7,25);
+  context.lineTo(12,29);
+  context.lineTo(7,31);
+  context.fillStyle="rgba(0,255,255,0.4)";
   context.fill();
   context.shadowBlur=0;
   }

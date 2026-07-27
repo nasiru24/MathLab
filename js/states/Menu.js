@@ -1,4 +1,6 @@
 import { MenuStar } from "./MenuStar.js";
+import { ShootingStar } from "./ShootingStar.js";
+import { MenuShip } from "../entities/MenuShip.js";
 
 export class Menu{
   constructor(game){
@@ -7,6 +9,12 @@ export class Menu{
     this.stars=[];
     for(let i=0;i<120;i++){
       this.stars.push(new MenuStar(this.game));
+    }
+    this.shootingStar=[];
+    for(let i=0;i<3;i++){
+      this.shootingStar.push(
+        new ShootingStar(game)
+      );
     }
     this.mouse={
       x:0,
@@ -32,14 +40,37 @@ export class Menu{
       this.mouse.x=e.clientX-rect.left;
       this.mouse.y=e.clientY-rect.top;
     });
+    this.backgroundOffset=0;
+    this.buttonPulse=0;
+    this.buttonScale=1;
+    this.ship=new MenuShip(game);
+    this.resize();
 
+  }
+
+  resize(){
+    const width=this.game.canvas.width;
+    const height=this.game.canvas.height;
+    this.titleY=height*0.25;
+    this.shipX=width/2;
+    this.shipY=height*0.45;
+    this.buttonY=height*0.72;
   }
 
   
   update(){
     for(const star of this.stars){
     star.update();
+    this.backgroundOffset+=0.005;
+    this.buttonPulse+=0.05;
   }
+  this.buttonPulse+=0.05;
+  this.buttonScale=1+Math.sin(this.buttonPulse)*0.03;
+  for(const shooting of this.shootingStar){
+    shooting.update();
+  }
+
+  this.ship.update();
 
     let button=this.startButton;
     if(this.clicked && this.mouse.x>button.x && this.mouse.x<button.x + button.width &&
@@ -65,13 +96,22 @@ export class Menu{
   }
 
   render(context,camera){
-    for(const star of this.stars){
-      star.render(context);
-    }
     const width=context.canvas.width;
     const height=context.canvas.height;
     const centerX=width/2;
     const centerY=height/2;
+    const isMobile=height>width || width<600;
+    const titleY=isMobile
+    ?height*0.18:height*0.22;
+    const subtitleY=isMobile
+    ?height*0.30:height*0.34;
+    const buttonY=isMobile
+    ?height*0.50:height*0.48;
+    const footerY=isMobile
+    ?height*0.90:height*0.92;
+    const scale=Math.min(width/1200,height/800);
+    this.ship.x=centerX;
+    this.ship.y=buttonY-60;
 
     context.save();
     const t=Date.now()*0.15;
@@ -87,16 +127,36 @@ export class Menu{
     context.stroke();
 
     const gradient=context.createLinearGradient(
-      0,0,0,height
+      width/2,height/2,0,
+      width/2,height/2,width
     );
     gradient.addColorStop(0,"#020024");
     gradient.addColorStop(0.5,"#090979");
-    gradient.addColorStop(1,"#000000");
+    gradient.addColorStop(1,"#000010");
     context.fillStyle=gradient;
     context.fillRect(0,0,
     width,height
     );
-    const titleSize=Math.min(width*0.12,60);
+
+    for(const star of this.stars){
+      star.render(context);
+    }
+
+    for(const shooting of this.shootingStar){
+      shooting.render(context);
+    }
+
+    this.ship.render(context);
+
+    context.fillStyle="#024";
+    context.beginPath();
+    context.arc(
+      width/2,height+200,
+      300,0,Math.PI*2
+    );
+    context.fill();
+
+    const titleSize=Math.min(width*0.09,60);
     const float=Math.sin(Date.now()*0.003)*8;
 
     context.shadowColor="#00ffff";
@@ -105,21 +165,34 @@ export class Menu{
     context.font=`bold ${titleSize}px Arial`;
     context.textAlign="center";
     context.fillText(
-      "MATHLAB SPACE", centerX,centerY-190+float
+      "MATHLAB SPACE", centerX,titleY+float
     );
 
     context.font="22px Arial";
     context.fillStyle="#bbbbbb";
     context.fillText(
       "Explore . Survive . Conquer",
-      context.canvas.width/2, context.canvas.height*0.34
+      centerX, subtitleY
     );
+    context.fill();
 
-    this.startButton.width=Math.min(width*0.65,300);
-    this.startButton.height=70;
+    this.startButton.width=Math.min(width*0.7,320);
+    this.startButton.height=Math.min(height*0.09,70);
     this.startButton.x=centerX-this.startButton.width/2;
-    this.startButton.y=centerY+20;
+    this.startButton.y=buttonY;
     let pulse=Math.sin(Date.now()/300)*8;
+
+    context.translate(
+      this.startButton.x,
+      this.startButton.y
+    );
+    context.scale(
+      this.buttonScale,this.buttonScale
+    );
+    context.translate(
+      -this.startButton.x,
+      -this.startButton.y
+    );
 
     context.shadowColor="#00ffff";
     context.shadowBlur=2+pulse;
@@ -139,38 +212,42 @@ export class Menu{
     context.fillStyle="white";
     context.font=`bold ${Math.min(width*0.07,32)}px Arial`;
     context.textAlign="center";
+    let buttonGlow=Math.sin(this.buttonPulse)*10+20;
+    context.shadowBlur=buttonGlow;
+    context.shadowColor="#00ffff";
 
     context.fillText(
       "START GAME",
-      centerX,this.startButton.y+45
+      centerX,this.startButton.y+36
     );
 
     context.font="20px Arial";
+    const instructionY=this.startButton.y+height*0.15;
     context.fillText(
-      "Have You Ever Travel Through Space ? Try Me!",
-      context.canvas.width/2,
-      context.canvas.height/2+130
+      "Travel Through Space",
+      centerX,instructionY
     );
 
     context.font="20px Arial";
     context.fillStyle="#aaaaaa";
     context.fillText(
-      "Press ENTER or TAP button",
-      centerX, this.startButton.y+150
+      "ENTER or TAP",
+      centerX, instructionY+height*0.06
     );
 
+    const footerSize=Math.min(width*0.04,18);
     context.shadowBlur=0;
-    context.font="18px Arial";
+    context.font=`${footerSize}px Arial`;
     context.fillStyle="#888";
     context.fillText(
       "Version 1.0",
-      centerX,height-25
+      centerX,height*0.86
     );
 
     context.fillText(
       "Created By Nasir",
       centerX,
-      height-50
+      height*0.8
     );
 
     context.restore();

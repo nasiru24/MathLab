@@ -18,6 +18,7 @@ import { FireButton } from "../input/FireButton.js";
 import { Vector2 } from "../math/Vector2.js";
 import { PulseButton } from "../input/PulseButton.js";
 import { isTouchDevice } from "../utils/Device.js";
+import { WeaponButton } from "../input/WeaponButton.js";
 
 export class Game{
   constructor(canvas){
@@ -82,6 +83,7 @@ export class Game{
     this.joystick=new Joystick();
     this.fireButton=new FireButton();
     this.pulseButton=new PulseButton();
+    this.weaponButton=new WeaponButton();
     this.touchControls=new TouchControls(this.input);
     this.inputManager=new InputManager(this,
       this.input,this.joystick,
@@ -97,6 +99,10 @@ export class Game{
     window.addEventListener("resize",()=>{
       this.canvas.width=window.innerWidth;
       this.canvas.height=window.innerHeight;
+      if(this.menu){
+        this.menu.resize();
+        this.menu.ship.resize();
+      }
     });
     window.addEventListener("resize",()=>{
       this.camera.resize();
@@ -172,6 +178,7 @@ export class Game{
     this.joystick.update();
     this.fireButton.update();
     this.pulseButton.update();
+    this.weaponButton.update();
     }
 
     if(this.waveMessageTimer>0){
@@ -505,6 +512,10 @@ export class Game{
   }
 
   render(context,camera){
+    if(this.state === "Menu"){
+    this.menu.render(context);
+    return;
+    }
     this.time+=0.05;
     this.context.clearRect(
       0,
@@ -513,10 +524,6 @@ export class Game{
       this.canvas.height
     );
 
-    if(this.state === "Menu"){
-    this.menu.render(context);
-    return;
-    }
     if(this.state === "GameOver"){
       this.gameOverScreen.render(context);
       return;
@@ -537,6 +544,7 @@ export class Game{
   this.joystick.render(this.context);
   this.fireButton.render(this.context);
   this.pulseButton.render(this.context);
+  this.weaponButton.render(context);
   }
 
   if(this.waveMessageTimer>0){
@@ -588,6 +596,7 @@ export class Game{
   }
 
   this.drawPulse(context);
+  context.fillText("Weapon: "+this.ship.currentWeapon,5,70);
 
   context.shadowBlur=0;
 
