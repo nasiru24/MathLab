@@ -22,6 +22,7 @@ const ship=new Ship(
   game
 );
 game.ship=ship;
+game.weaponButton.ship=ship;
 game.add(ship);
 
 game.camera.follow(ship);

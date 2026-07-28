@@ -40,7 +40,7 @@ export class Ship extends GameObject{
     this.maxPulseEnergy=100;
     this.pulseCost=50;
     this.pulseRecharge=0.15;
-    this.currentWeapon="pulse";
+    this.currentWeapon="SINGLE";
 
   }
 
@@ -71,11 +71,23 @@ export class Ship extends GameObject{
     this.rotation+=this.rotationSpeed;
   }
 
+  if(input.touchX<-0.2){
+    this.rotation-=0.05;
+  }
+
+  if(this.touchX>0.2){
+    this.rotation+=0.05;
+  }
+
   this.acceleration=new Vector2(0,0);
   
 if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up || moveY<-0.2){
   this.acceleration.x=Math.cos(this.rotation)*this.enginePower;
   this.acceleration.y=Math.sin(this.rotation)*this.enginePower;
+  if(input.touchY<-0.2){
+   this.acceleration.x=Math.cos(this.rotation)*this.enginePower;
+   this.acceleration.y=Math.sin(this.rotation)*this.enginePower;
+  }
 
   if(Math.random()<0.5){
     let particlePosition=new Vector2(
@@ -133,10 +145,10 @@ if(this.fireCooldown>0){
     this.position.y+Math.sin(this.rotation)*30,
     this.rotation
   );
-  if(this.currentWeapon==="pulse"){
+  if(this.currentWeapon==="SINGLE"){
     this.firePulse();
   }
-  if(this.currentWeapon==="twin"){
+  if(this.currentWeapon==="TWIN"){
     this.fireTwinCannons();
   }
   this.game.add(bullet);
@@ -149,11 +161,19 @@ if(input.keys["KeyT"]){
 if(this.fireCooldown>0){
   this.fireCooldown--;
 }
-if(input.keys["KeyQ"] || input.touch.weaponSwitch || input.weaponSwitch && 
+/*
+if((input.keys["KeyQ"] || input.touch.weaponSwitch || input.weaponSwitch) && 
   this.fireCooldown<=0){
   this.switchWeapon();
   this.fireCooldown=20;
   input.weaponSwitch=false;
+}*/
+
+if((input.keys["KeyQ"] || input.touch.weaponSwitch || input.weaponSwitch) && this.fireCooldown<=0){
+  this.switchWeapon();
+  this.fireCooldown=20;
+  input.weaponSwitch=false;
+  input.touch.weaponSwitch=false;
 }
 
 if((input.keys["KeyE"] || input.touch.pulse || input.pulse) && this.pulseCooldown<=0 && this.pulseEnergy>=this.pulseCost){
@@ -257,19 +277,6 @@ die(){
     this.game.add(pulse);
   }
 
-  /*getCannonPosition(side){
-    const offsetX=side==="left"?-18:18;
-    const offsetY=-50;
-    const cos=Math.cos(this.rotation);
-    const sin=Math.sin(this.rotation);
-    return{
-      x:this.position.x+
-      offsetX*cos-offsetY*sin,
-      y:this.position.y+
-      offsetX*sin+offsetY*cos
-    };
-  }*/
-
   fireTwinCannons(){
     const leftX=this.position.x-18;
     const rightX=this.position.x+18;
@@ -294,12 +301,11 @@ die(){
   }
 
   switchWeapon(){
-    if(this.currentWeapon==="pulse"){
-      this.currentWeapon="twin";
+    if(this.currentWeapon==="SINGLE"){
+      this.currentWeapon="TWIN";
     }else{
-      this.currentWeapon="pulse";
+      this.currentWeapon="SINGLE";
     }
-    console.log("weapon",this.currentWeapon);
   }
 
 

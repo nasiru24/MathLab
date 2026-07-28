@@ -5,18 +5,19 @@ export class Input{
   this.moveY=0;
   this.fire=false;
   this.pulse=false;
-  this.weaponSwitch=false;
   this.keys={};
   this.touch={
     up:false,
     left:false,
     right:false,
-    fire:false
+    fire:false,
 
   };
+  this.weaponSwitch=false;
 
 window.addEventListener("keydown",(event)=>{
   this.keys[event.code]=true;
+  
 });
 
 window.addEventListener("keyup",(event)=>{
