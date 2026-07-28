@@ -22,10 +22,6 @@ export class InputManager{
       this.input.moveX=this.input.touchRight-this.input.touchLeft;
       this.input.moveY=this.input.touchDown-this.input.touchUp;
     }
-    if(this.touchSteering){
-    this.touchX=this.touchSteering.directionX;
-    this.touchY=this.touchSteering.directionY;
-    }
 
     this.input.fire=this.fireButton.pressed;
     this.input.pulse=this.pulseButton.pressed;

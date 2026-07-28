@@ -19,8 +19,6 @@ import { Vector2 } from "../math/Vector2.js";
 import { PulseButton } from "../input/PulseButton.js";
 import { isTouchDevice } from "../utils/Device.js";
 import { WeaponButton } from "../input/WeaponButton.js";
-//import { TouchSteering } from "../input/TouchSteering.js";
-//import { TouchIndicator } from "../input/TouchIndicator.js";
 
 export class Game{
   constructor(canvas){
@@ -86,13 +84,24 @@ export class Game{
     this.fireButton=new FireButton();
     this.pulseButton=new PulseButton();
     this.weaponButton=new WeaponButton(this.ship);
-    //this.touchSteering=new TouchSteering(this.touchIndicator);
-    //this.touchIndicator=new TouchIndicator();
     this.touchControls=new TouchControls(this.input);
     this.inputManager=new InputManager(this,
       this.input,this.joystick,
       this.fireButton,this.pulseButton,this.weaponButton);
     this.time=0;
+    
+    this.touchState={
+      steering:{
+        active:false,
+        pointerID:null,
+        startX:0,
+        startY:0,
+        x:0,
+        y:0,
+        directionX:0,
+        directionY:0
+      }
+    };
 
     window.addEventListener("resize",()=>{
       this.joystick.resize();
@@ -112,6 +121,24 @@ export class Game{
     window.addEventListener("resize",()=>{
       this.camera.resize();
     });
+
+    this.setupTouchControls();
+  }
+
+  setupTouchControls(){
+
+  }
+
+  onTouchStart(event){
+
+  }
+
+  onTouchMove(event){
+
+  }
+
+  onTouchEnd(event){
+
   }
 
   addScore(points){
@@ -499,15 +526,15 @@ export class Game{
         "LOW ENERGY",40,185
       );
     }
-    let readySize=window.innerWidth<600?12:14;
+    let readySize=window.innerWidth<600?10:12;
     context.fillStyle="white";
     context.font=`${readySize}px Arial`;
-    let status=(this.ship.pulseEnergy/this.ship.maxPulseEnergy)>0.9?"READY":"CHARGING";
+    let status=(this.ship.pulseEnergy/this.ship.maxPulseEnergy)>0.9?" READY":" CHARGING";
     
     context.fillText(
       status,200,157
     );
-    let onlineSize=window.innerWidth<600?12:14;
+    let onlineSize=window.innerWidth<600?10:12;
     context.shadowBlur=0;
     context.fillStyle="#00ff88";
     context.font=`${onlineSize}px Arial`;
@@ -545,12 +572,12 @@ export class Game{
     }
   }
 
-  if(this.isTouch){
+ // if(this.isTouch){
   this.joystick.render(this.context);
   this.fireButton.render(this.context);
   this.pulseButton.render(this.context);
   this.weaponButton.render(this.context);
-  }
+ // }
 
   if(this.waveMessageTimer>0){
     let hudSize=window.innerWidth<600?24:40;

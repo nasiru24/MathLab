@@ -28,6 +28,7 @@ export class WeaponButton{
         (touch.clientY-rect.top)-this.weaponButtonY);
         if(distance<this.radius){
           this.pressed=true;
+          input.weaponSwitch=true;
           input.touch.weaponSwitch=true;
         }
       }
