@@ -19,8 +19,8 @@ import { Vector2 } from "../math/Vector2.js";
 import { PulseButton } from "../input/PulseButton.js";
 import { isTouchDevice } from "../utils/Device.js";
 import { WeaponButton } from "../input/WeaponButton.js";
-import { TouchSteering } from "../input/TouchSteering.js";
-import { TouchIndicator } from "../input/TouchIndicator.js";
+//import { TouchSteering } from "../input/TouchSteering.js";
+//import { TouchIndicator } from "../input/TouchIndicator.js";
 
 export class Game{
   constructor(canvas){
@@ -86,12 +86,12 @@ export class Game{
     this.fireButton=new FireButton();
     this.pulseButton=new PulseButton();
     this.weaponButton=new WeaponButton(this.ship);
-    this.touchSteering=new TouchSteering(this.touchIndicator);
-    this.touchIndicator=new TouchIndicator();
+    //this.touchSteering=new TouchSteering(this.touchIndicator);
+    //this.touchIndicator=new TouchIndicator();
     this.touchControls=new TouchControls(this.input);
     this.inputManager=new InputManager(this,
       this.input,this.joystick,
-      this.fireButton,this.pulseButton,this.weaponButton,this.touchSteering);
+      this.fireButton,this.pulseButton,this.weaponButton);
     this.time=0;
 
     window.addEventListener("resize",()=>{
@@ -545,13 +545,12 @@ export class Game{
     }
   }
 
- // if(this.isTouch){
+  if(this.isTouch){
   this.joystick.render(this.context);
   this.fireButton.render(this.context);
   this.pulseButton.render(this.context);
   this.weaponButton.render(this.context);
-  this.touchIndicator.render(this.context);
- // }
+  }
 
   if(this.waveMessageTimer>0){
     let hudSize=window.innerWidth<600?24:40;
@@ -581,9 +580,9 @@ export class Game{
       this.canvas.height
     );
 
-  context.font="30px Arial";
+  context.font="25px Arial";
     context.fillText(
-      "SCORE:"+this.score,
+      "SCORE: "+this.score,
       this.canvas.width/2,
       this.canvas.height/2+10
     );
@@ -602,6 +601,7 @@ export class Game{
   }
 
   this.drawPulse(context);
+  context.font="18px Arial";
   context.fillText("Weapon: "+this.ship.currentWeapon,30,30);
 
   context.shadowBlur=0;

@@ -71,23 +71,25 @@ export class Ship extends GameObject{
     this.rotation+=this.rotationSpeed;
   }
 
-  if(input.touchX<-0.2){
+  /*if(input.touchX<-0.2){
     this.rotation-=0.05;
   }
 
   if(this.touchX>0.2){
     this.rotation+=0.05;
-  }
+  }*/
 
   this.acceleration=new Vector2(0,0);
   
 if(input.keys["KeyW"]||input.keys["ArrowUp"] || input.touch.up || moveY<-0.2){
   this.acceleration.x=Math.cos(this.rotation)*this.enginePower;
   this.acceleration.y=Math.sin(this.rotation)*this.enginePower;
+
+  /*
   if(input.touchY<-0.2){
    this.acceleration.x=Math.cos(this.rotation)*this.enginePower;
    this.acceleration.y=Math.sin(this.rotation)*this.enginePower;
-  }
+  }*/
 
   if(Math.random()<0.5){
     let particlePosition=new Vector2(
@@ -161,13 +163,6 @@ if(input.keys["KeyT"]){
 if(this.fireCooldown>0){
   this.fireCooldown--;
 }
-/*
-if((input.keys["KeyQ"] || input.touch.weaponSwitch || input.weaponSwitch) && 
-  this.fireCooldown<=0){
-  this.switchWeapon();
-  this.fireCooldown=20;
-  input.weaponSwitch=false;
-}*/
 
 if((input.keys["KeyQ"] || input.touch.weaponSwitch || input.weaponSwitch) && this.fireCooldown<=0){
   this.switchWeapon();
