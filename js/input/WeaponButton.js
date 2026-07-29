@@ -12,53 +12,69 @@ export class WeaponButton{
 
     this.weaponButtonX=0;
     this.weaponButtonY=0;
+    this.touchId=null;
     this.resize();
-
     this.pressed=false;
     this.setupControls();
+    
     window.addEventListener("resize",()=>{
+      this.resize();
     });
   }
 
   setupControls(){
-    window.addEventListener("touchstart",(event)=>{
-      for(const touch of event.touches){
-        let rect=document.querySelector("canvas").getBoundingClientRect();
-        let distance=Math.hypot((touch.clientX-rect.left)-this.weaponButtonX,
-        (touch.clientY-rect.top)-this.weaponButtonY);
-        if(distance<this.radius){
-          this.pressed=true;
-          input.weaponSwitch=true;
-          input.touch.weaponSwitch=true;
-        }
-      }
-    });
-    window.addEventListener("touchend",()=>{
-      this.pressed=false;
-    });
-    window.addEventListener("mousedown",(event)=>{
+    /*window.addEventListener("mousedown",(event)=>{
       let rect=document.querySelector("canvas").getBoundingClientRect();
         let distance=Math.hypot((event.clientX-rect.left)-this.weaponButtonX,
         (event.clientY-rect.top)-this.weaponButtonY);
-        if(distance<this.radius){
+        if(distance<=this.radius){
           this.pressed=true;
+          this.press();
         }
       }
     );
     window.addEventListener("mouseup",()=>{
       this.pressed=false;
-    });
+      this.release();
+    });*/
   }
 
+  containsPoint(x,y){
+    const distance=Math.hypot(
+      x-this.weaponButtonX,
+      y-this.weaponButtonY
+    );
+    return distance<=this.radius;
+  }
+
+  press(id){
+    if(this.pressed) return;
+    this.pressed=true;
+    this.touchId=id;
+    this.ship.switchWeapon();
+  }
+
+  release(id){
+    if(this.touchId===id){
+      console.log("released");
+    this.pressed=false;
+    this.touchId=null;
+    }
+  }
+
+  
   resize(){
     let bottomOffset=40;
     if(window.innerWidth<600){
       bottomOffset=100;
+    };
+    if(window.innerWidth<600){
+      bottomOffset=100;
     }
     const scale=Math.min(window.innerWidth/400,1.4);
-    this.radius=40*scale;
-    this.weaponButtonX=window.innerWidth-this.radius-25;
-    this.weaponButtonY=window.innerHeight/2;
+    this.radius=20*scale;
+    this.weaponButtonX=window.innerWidth-this.radius-45;
+    this.weaponButtonY=window.innerHeight/2-20;
   }
 
   render(context,x,y,radius){
@@ -99,12 +115,10 @@ export class WeaponButton{
     context.font="bold 16px Arial";
     context.textAlign="center";
     context.textBaseline="middle";
-
     const text=this.ship.currentWeapon==="SINGLE"
     ?"SINGLE":"TWIN";
     context.fillText(text,this.weaponButtonX,
       this.weaponButtonY-5);
-      context.fillText("Q",this.weaponButtonX,this.weaponButtonY+15);
 
     context.restore();
   }

@@ -129,17 +129,17 @@ if(this.fireCooldown>0){
 
   if(input.keys["Space"] || input.touch.fire || input.fire && 
     this.fireCooldown<=0){
+      if(this.currentWeapon==="SINGLE"){
+        this.firePulse();
+      }
+      else if(this.currentWeapon==="TWIN"){
+        this.fireTwinCannons();
+      }
     const bullet=new Bullet(
     this.position.x+Math.cos(this.rotation)*30,
     this.position.y+Math.sin(this.rotation)*30,
     this.rotation
   );
-  if(this.currentWeapon==="SINGLE"){
-    this.firePulse();
-  }
-  if(this.currentWeapon==="TWIN"){
-    this.fireTwinCannons();
-  }
   this.game.add(bullet);
   this.fireCooldown=this.fireRate;
   this.game.audio.play("laser");
@@ -147,15 +147,10 @@ if(this.fireCooldown>0){
 if(input.keys["KeyT"]){
   this.fireTwinCannons();
 }
-if(this.fireCooldown>0){
-  this.fireCooldown--;
-}
 
-if((input.keys["KeyQ"] || input.touch.weaponSwitch || input.weaponSwitch) && this.fireCooldown<=0){
+if(input.keys["KeyQ"] && this.fireCooldown<=0){
   this.switchWeapon();
   this.fireCooldown=20;
-  input.weaponSwitch=false;
-  input.touch.weaponSwitch=false;
 }
 
 if((input.keys["KeyE"] || input.touch.pulse || input.pulse) && this.pulseCooldown<=0 && this.pulseEnergy>=this.pulseCost){
@@ -169,8 +164,6 @@ if(this.pulseCooldown>0){
 if(this.pulseEnergy<this.maxPulseEnergy){
   this.pulseEnergy+=this.pulseRecharge;
 }
-
-
 
   if(this.velocity.length()>this.maxSpeed){
     this.velocity.normalize();

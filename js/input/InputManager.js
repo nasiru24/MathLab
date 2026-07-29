@@ -1,16 +1,17 @@
 export class InputManager{
-  constructor(game,input,joystick,fireButton,pulseButton,weaponButton){
+  constructor(game,input,joystick,fireButton,pulseButton){
     this.game=game;
     this.input=input;
     this.joystick=joystick;
     this.fireButton=fireButton;
     this.pulseButton=pulseButton;
-    this.weaponButton=weaponButton;
+    //this.weaponButton=weaponButton;
     this.touchX=0;
     this.touchY=0;
   }
 
   update(){
+    console.count("InputManager update");
     this.input.moveX=0;
     this.input.moveY=0;
     
@@ -25,6 +26,6 @@ export class InputManager{
 
     this.input.fire=this.fireButton.pressed;
     this.input.pulse=this.pulseButton.pressed;
-    this.input.weaponSwitch=this.weaponButton.pressed;
+   // this.input.weaponSwitch=this.weaponButton.pressed;
   }
 }

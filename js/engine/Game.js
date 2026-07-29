@@ -1,3 +1,4 @@
+console.count("Game update");
 import {Camera} from "./Camera.js";
 import { Collision } from "./Collision.js";
 import {Bullet} from "../entities/Bullet.js";
@@ -87,7 +88,7 @@ export class Game{
     this.touchControls=new TouchControls(this.input);
     this.inputManager=new InputManager(this,
       this.input,this.joystick,
-      this.fireButton,this.pulseButton,this.weaponButton);
+      this.fireButton,this.pulseButton);
     this.time=0;
     
     this.touchState={
@@ -115,7 +116,6 @@ export class Game{
       this.canvas.height=window.innerHeight;
       if(this.menu){
         this.menu.resize();
-        this.menu.ship.resize();
       }
     });
     window.addEventListener("resize",()=>{
@@ -123,23 +123,68 @@ export class Game{
     });
 
     this.setupTouchControls();
+    this.setupMouseControls();
   }
 
   setupTouchControls(){
+    this.canvas.addEventListener(
+      "touchstart",(event)=>this.onTouchStart(event),{passive:false}
+    );
+    this.canvas.addEventListener(
+      "touchmove",(event)=>this.onTouchMove(event),{passive:false}
+    );
+    this.canvas.addEventListener(
+      "touchcancel",(event)=>this.onTouchEnd(event)
+    );
 
   }
 
   onTouchStart(event){
+    event.preventDefault();
+    const rect=this.canvas.getBoundingClientRect();
+    for(const touch of event.changedTouches){
+      const x=touch.clientX-rect.left;
+      const y=touch.clientY-rect.top;
+      if(this.weaponButton.containsPoint(x,y)){
+        this.weaponButton.press(touch.identifier);
+        return;
+      }
+    } 
 
   }
 
   onTouchMove(event){
+    event.preventDefault();
 
   }
 
   onTouchEnd(event){
+    for(const touch of this.changedTouches){
+    this.weaponButton.release(touch.identifier);
+    }
 
   }
+
+  setupMouseControls(){
+    this.canvas.addEventListener(
+      "mousedown",(event)=>{
+        const rect=this.canvas.getBoundingClientRect();
+        const x=event.clientX-rect.left;
+        const y=event.clientY-rect.top;
+
+        if(this.weaponButton.containsPoint(x,y)){
+          this.weaponButton.press("mouse");
+          console.log("Mouse press");
+        }
+      }
+    );
+    this.canvas.addEventListener(
+      "mouseup",()=>{
+        this.weaponButton.release("mouse");
+      }
+    );
+  }
+
 
   addScore(points){
     this.score+=points;
@@ -210,7 +255,7 @@ export class Game{
     this.joystick.update();
     this.fireButton.update();
     this.pulseButton.update();
-    this.weaponButton.update();
+    //this.weaponButton.update();
     }
 
     if(this.waveMessageTimer>0){
@@ -572,12 +617,12 @@ export class Game{
     }
   }
 
- // if(this.isTouch){
+  if(this.isTouch){
   this.joystick.render(this.context);
   this.fireButton.render(this.context);
   this.pulseButton.render(this.context);
   this.weaponButton.render(this.context);
- // }
+  }
 
   if(this.waveMessageTimer>0){
     let hudSize=window.innerWidth<600?24:40;
@@ -607,7 +652,7 @@ export class Game{
       this.canvas.height
     );
 
-  context.font="25px Arial";
+  context.font="22px Arial";
     context.fillText(
       "SCORE: "+this.score,
       this.canvas.width/2,
@@ -629,7 +674,7 @@ export class Game{
 
   this.drawPulse(context);
   context.font="18px Arial";
-  context.fillText("Weapon: "+this.ship.currentWeapon,30,30);
+  context.fillText("WEAPON: "+this.ship.currentWeapon,30,30);
 
   context.shadowBlur=0;
 
