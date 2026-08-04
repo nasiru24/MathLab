@@ -135,7 +135,8 @@ if(this.fireCooldown>0){
       else if(this.currentWeapon==="TWIN"){
         this.fireTwinCannons();
       }
-    const bullet=new Bullet(
+
+    /*const bullet=new Bullet(
     this.position.x+Math.cos(this.rotation)*30,
     this.position.y+Math.sin(this.rotation)*30,
     this.rotation
@@ -143,7 +144,8 @@ if(this.fireCooldown>0){
   this.game.add(bullet);
   this.fireCooldown=this.fireRate;
   this.game.audio.play("laser");
-}
+}*/
+    }
 if(input.keys["KeyT"]){
   this.fireTwinCannons();
 }

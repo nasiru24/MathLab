@@ -8,8 +8,6 @@ export class WeaponButton{
     const scale=Math.min(window.innerWidth/400,1.4);
     this.radius=20*scale;
 
-    this.currentWeapon="SINGLE";
-
     this.weaponButtonX=0;
     this.weaponButtonY=0;
     this.touchId=null;
@@ -56,7 +54,6 @@ export class WeaponButton{
 
   release(id){
     if(this.touchId===id){
-      console.log("released");
     this.pressed=false;
     this.touchId=null;
     }
@@ -78,7 +75,7 @@ export class WeaponButton{
   }
 
   render(context,x,y,radius){
-   this.radius=this.pressed?50:45;
+   this.radius=this.pressed?50:25;
     context.save();
     context.shadowBlur=this.pressed?40:20;
     context.shadowColor="#00ffff";
@@ -112,11 +109,12 @@ export class WeaponButton{
     context.fill();
     context.shadowBlur=0;
     context.fillStyle="white";
-    context.font="bold 16px Arial";
+    context.font="bold 12px Arial";
     context.textAlign="center";
     context.textBaseline="middle";
     const text=this.ship.currentWeapon==="SINGLE"
     ?"SINGLE":"TWIN";
+
     context.fillText(text,this.weaponButtonX,
       this.weaponButtonY-5);
 

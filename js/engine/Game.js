@@ -152,7 +152,6 @@ export class Game{
     } 
 
   }
-
   onTouchMove(event){
     event.preventDefault();
 
@@ -174,7 +173,6 @@ export class Game{
 
         if(this.weaponButton.containsPoint(x,y)){
           this.weaponButton.press("mouse");
-          console.log("Mouse press");
         }
       }
     );
@@ -557,7 +555,7 @@ export class Game{
       x,y,width*(this.ship.pulseEnergy/this.ship.maxPulseEnergy),
       height
     );
-    context.fillStyle="white";
+    /*context.fillStyle="white";
     context.font=`${pulseSize}px Arial`;
     context.fillText(
       "PULSE CORE",x+20,y-12
@@ -570,7 +568,7 @@ export class Game{
       context.fillText(
         "LOW ENERGY",40,185
       );
-    }
+    }*/
     let readySize=window.innerWidth<600?10:12;
     context.fillStyle="white";
     context.font=`${readySize}px Arial`;
@@ -579,13 +577,13 @@ export class Game{
     context.fillText(
       status,200,157
     );
-    let onlineSize=window.innerWidth<600?10:12;
+    /*let onlineSize=window.innerWidth<600?10:12;
     context.shadowBlur=0;
     context.fillStyle="#00ff88";
     context.font=`${onlineSize}px Arial`;
     context.fillText(
       "ENGINE ONLINE",40,175
-    );
+    );*/
   }
 
   render(context,camera){
@@ -652,7 +650,7 @@ export class Game{
       this.canvas.height
     );
 
-  context.font="22px Arial";
+  context.font="20px Arial";
     context.fillText(
       "SCORE: "+this.score,
       this.canvas.width/2,
@@ -673,7 +671,7 @@ export class Game{
   }
 
   this.drawPulse(context);
-  context.font="18px Arial";
+  context.font="14px Arial";
   context.fillText("WEAPON: "+this.ship.currentWeapon,30,30);
 
   context.shadowBlur=0;
